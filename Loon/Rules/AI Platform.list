@@ -1,0 +1,18 @@
+# > Openai
+DOMAIN-SUFFIX,openai.com
+DOMAIN-SUFFIX,chatgpt.com
+DOMAIN-SUFFIX,sora.com
+DOMAIN-SUFFIX,oaistatic.com
+DOMAIN-SUFFIX,oaiusercontent.com
+# > Claude 2
+DOMAIN-SUFFIX,anthropic.com
+DOMAIN-SUFFIX,claude.ai
+# > Google Gemini
+DOMAIN-SUFFIX,gemini.google.com
+DOMAIN-SUFFIX,proactivebackend-pa.googleapis.com
+# > Google AiStudio
+DOMAIN-SUFFIX,aistudio.google.com
+DOMAIN-SUFFIX,alkalimakersuite-pa.clients6.google.com
+DOMAIN-SUFFIX,generativelanguage.googleapis.com
+# > Microsoft Copilot For Image Generates
+DOMAIN-SUFFIX,copilot.microsoft.com

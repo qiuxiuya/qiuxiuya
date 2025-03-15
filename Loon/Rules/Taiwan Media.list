@@ -1,0 +1,63 @@
+# > KKTV
+DOMAIN-SUFFIX,kfs.io
+DOMAIN-SUFFIX,kktv-theater.kk.stream
+DOMAIN-SUFFIX,kkbox.com
+DOMAIN-SUFFIX,kkbox.com.tw
+DOMAIN-SUFFIX,kktv.com.tw
+DOMAIN-SUFFIX,kktv.me
+# > LiTV
+DOMAIN-SUFFIX,litv.tv
+DOMAIN-SUFFIX,litvfreepc.akamaized.net
+# > MyVideo
+DOMAIN-SUFFIX,cdn.plyr.io
+DOMAIN-SUFFIX,myvideo.net.tw
+# > 4GTV
+DOMAIN-SUFFIX,4gtv.tv
+DOMAIN-SUFFIX,4gtvfreepc-cds.cdn.hinet.net
+DOMAIN-SUFFIX,4gtvfreepcvod-cds.cdn.hinet.net
+DOMAIN-SUFFIX,4gtvpc-cds.cdn.hinet.net
+DOMAIN-SUFFIX,4gtvpcvod-cds.cdn.hinet.net
+# > ofiii
+DOMAIN-SUFFIX,ntdofifreepc.akamaized.net
+DOMAIN-SUFFIX,ntdofifreepocpc.akamaized.net
+# > LineTV.TW
+DOMAIN-SUFFIX,d3c7rimkq79yfu.cloudfront.net
+DOMAIN-SUFFIX,linetv.tw
+# > Hami Video
+DOMAIN-SUFFIX,cdn.hinet.net
+DOMAIN-SUFFIX,hamivideo.hinet.net
+DOMAIN-SUFFIX,scc.ott.hinet.net
+# > CatchPlay+
+DOMAIN-SUFFIX,catchplay.com
+DOMAIN-SUFFIX,d2ivmxp5z2ww0n.cloudfront.net
+DOMAIN-SUFFIX,ols-ww100-cp.akamaized.net
+DOMAIN-SUFFIX,tra-www000-cp.akamaized.net
+# > HBO GO Asia
+DOMAIN-SUFFIX,44wilhpljf.execute-api.ap-southeast-1.amazonaws.com
+DOMAIN-SUFFIX,bcbolthboa-a.akamaihd.net
+DOMAIN-SUFFIX,dai3fd1oh325y.cloudfront.net
+DOMAIN-SUFFIX,hboasia1-i.akamaihd.net
+DOMAIN-SUFFIX,hboasia2-i.akamaihd.net
+DOMAIN-SUFFIX,hboasia3-i.akamaihd.net
+DOMAIN-SUFFIX,hboasia4-i.akamaihd.net
+DOMAIN-SUFFIX,hboasia5-i.akamaihd.net
+DOMAIN-SUFFIX,hboasialive.akamaized.net
+DOMAIN-SUFFIX,hbogoprod-vod.akamaized.net
+DOMAIN-SUFFIX,hbolb.onwardsmg.com
+DOMAIN-SUFFIX,hbounify-prod.evergent.com
+DOMAIN-SUFFIX,hbogo.co.th
+DOMAIN-SUFFIX,hbogoasia.com
+DOMAIN-SUFFIX,hbogoasia.hk
+DOMAIN-SUFFIX,hbogoasia.id
+DOMAIN-SUFFIX,hbogoasia.ph
+DOMAIN-SUFFIX,hbogoasia.sg
+DOMAIN-SUFFIX,hbogoasia.tw
+# > Bahamut Anime
+DOMAIN-SUFFIX,bahamut.com.tw
+DOMAIN-SUFFIX,gamer.com.tw
+DOMAIN-SUFFIX,gamer-cds.cdn.hinet.net
+DOMAIN-SUFFIX,gamer2-cds.cdn.hinet.net
+# > BiliBili
+DOMAIN-SUFFIX,bilibili.com
+# > Friday Video
+DOMAIN-SUFFIX,video.friday.tw

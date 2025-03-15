@@ -1,0 +1,96 @@
+# > DAZN
+DOMAIN-SUFFIX,dazn-api.com
+DOMAIN-SUFFIX,dazn.com
+DOMAIN-SUFFIX,dazndn.com
+DOMAIN-SUFFIX,indazn.com
+DOMAIN-SUFFIX,d151l6v8er5bdm.cloudfront.net
+DOMAIN-SUFFIX,d1sgwhnao7452x.cloudfront.net
+DOMAIN-SUFFIX,dcalivedazn.akamaized.net
+DOMAIN-SUFFIX,dcblivedazn.akamaized.net
+# > Hotstar
+DOMAIN-SUFFIX,hotstar.com
+DOMAIN-SUFFIX,hotstarext.com
+# > Disney+
+DOMAIN-SUFFIX,disney.connections.edge.bamgrid.com
+DOMAIN-SUFFIX,disney.api.edge.bamgrid.com
+DOMAIN-SUFFIX,disney-plus.net
+DOMAIN-SUFFIX,disneyplus.com
+DOMAIN-SUFFIX,dssott.com
+DOMAIN-SUFFIX,disneynow.com
+DOMAIN-SUFFIX,disneystreaming.com
+DOMAIN-SUFFIX,cdn.registerdisney.go.com
+# > Netflix
+DOMAIN-SUFFIX,netflix.com
+DOMAIN-SUFFIX,netflix.net
+DOMAIN-SUFFIX,nflximg.com
+DOMAIN-SUFFIX,nflximg.net
+DOMAIN-SUFFIX,nflxvideo.net
+DOMAIN-SUFFIX,nflxext.com
+DOMAIN-SUFFIX,nflxso.net
+# > Amazon Prime Video:
+DOMAIN-SUFFIX,d1v5ir2lpwr8os.cloudfront.net
+DOMAIN-SUFFIX,d22qjgkvxw22r6.cloudfront.net
+DOMAIN-SUFFIX,d25xi40x97liuc.cloudfront.net
+DOMAIN-SUFFIX,d27xxe7juh1us6.cloudfront.net
+DOMAIN-SUFFIX,dmqdd6hw24ucf.cloudfront.net
+DOMAIN-SUFFIX,aiv-cdn.net
+DOMAIN-SUFFIX,aiv-delivery.net
+DOMAIN-SUFFIX,amazonvideo.com
+DOMAIN-SUFFIX,atv-ext-eu.amazon.com
+DOMAIN-SUFFIX,atv-ext-fe.amazon.com
+DOMAIN-SUFFIX,atv-ext.amazon.com
+DOMAIN-SUFFIX,atv-ps-eu.amazon.co.uk
+DOMAIN-SUFFIX,atv-ps-eu.amazon.com
+DOMAIN-SUFFIX,atv-ps-fe.amazon.co.jp
+DOMAIN-SUFFIX,atv-ps-fe.amazon.com
+DOMAIN-SUFFIX,atv-ps.amazon.com
+DOMAIN-SUFFIX,primevideo.com
+DOMAIN-SUFFIX,pv-cdn.net
+DOMAIN-SUFFIX,video.a2z.com
+# > TVBAnywhere+
+DOMAIN-SUFFIX,tvbanywhere.com
+DOMAIN-SUFFIX,tvbanywhere.com.sg
+DOMAIN-SUFFIX,tvb.com
+DOMAIN-SUFFIX,tvb.com.au
+DOMAIN-SUFFIX,tvbc.com.cn
+DOMAIN-SUFFIX,tvbeventpower.com.hk
+DOMAIN-SUFFIX,tvbusa.com
+DOMAIN-SUFFIX,tvbweekly.com
+DOMAIN-SUFFIX,tvmedia.net.au
+# > Viu.com
+DOMAIN-SUFFIX,cognito-identity.us-east-1.amazonaws.com
+DOMAIN-SUFFIX,d1k2us671qcoau.cloudfront.net
+DOMAIN-SUFFIX,d2anahhhmp1ffz.cloudfront.net
+DOMAIN-SUFFIX,dfp6rglgjqszk.cloudfront.net
+DOMAIN-SUFFIX,d3o7oi00quuwqu.cloudfront.net
+DOMAIN-SUFFIX,mobileanalytics.us-east-1.amazonaws.com
+DOMAIN-SUFFIX,viu.com
+# > Steam Store
+DOMAIN-SUFFIX,steampowered.com
+# > Youtube
+DOMAIN-SUFFIX,youtube.com
+DOMAIN-SUFFIX,youtubei.googleapis.com
+# > Google Search
+DOMAIN-SUFFIX,google.com
+# > Instagram
+DOMAIN-SUFFIX,instagram.com
+# > iQiyi
+DOMAIN-SUFFIX,71.am
+DOMAIN-SUFFIX,iq.com
+DOMAIN-SUFFIX,iqiyi.com
+DOMAIN-SUFFIX,iqiyipic.com
+DOMAIN-SUFFIX,pps.tv
+DOMAIN-SUFFIX,ppsimg.com
+DOMAIN-SUFFIX,qiyi.com
+DOMAIN-SUFFIX,qiyipic.com
+DOMAIN-SUFFIX,qy.net
+# > Tiktok
+DOMAIN-SUFFIX,byteoversea.com
+DOMAIN-SUFFIX,ibytedtos.com
+DOMAIN-SUFFIX,ipstatp.com
+DOMAIN-SUFFIX,muscdn.com
+DOMAIN-SUFFIX,musical.ly
+DOMAIN-SUFFIX,tiktok.com
+DOMAIN-SUFFIX,tik-tokapi.com
+DOMAIN-SUFFIX,tiktokcdn.com
+DOMAIN-SUFFIX,tiktokv.com

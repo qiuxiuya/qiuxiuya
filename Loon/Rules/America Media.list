@@ -1,0 +1,200 @@
+# > FOX
+DOMAIN-SUFFIX,x-live-fox-stgec.uplynk.com
+DOMAIN-SUFFIX,fox.com
+DOMAIN-SUFFIX,foxdcg.com
+DOMAIN-SUFFIX,theplatform.com
+DOMAIN-SUFFIX,cdn-fox-networks-group-green.akamaized.net
+DOMAIN-SUFFIX,d3cv4a9a9wh0bt.cloudfront.net
+DOMAIN-SUFFIX,foxsports01-i.akamaihd.net
+DOMAIN-SUFFIX,foxsports02-i.akamaihd.net
+DOMAIN-SUFFIX,foxsports03-i.akamaihd.net
+# > HuluUSA
+DOMAIN-SUFFIX,assetshuluimcom-a.akamaihd.net
+DOMAIN-SUFFIX,cws-hulu.conviva.com
+DOMAIN-SUFFIX,hulu.com
+DOMAIN-SUFFIX,hulu.hb.omtrdc.net
+DOMAIN-SUFFIX,hulu.sc.omtrdc.net
+DOMAIN-SUFFIX,huluad.com
+DOMAIN-SUFFIX,huluqa.com
+DOMAIN-SUFFIX,hulustream.com
+# > NFL
+DOMAIN-SUFFIX,nfl.com
+# > ESPN+
+DOMAIN-SUFFIX,espn.api.edge.bamgrid.com
+DOMAIN-SUFFIX,espn.hb.omtrdc.net
+DOMAIN-SUFFIX,espndotcom.tt.omtrdc.net
+DOMAIN-SUFFIX,dtci.co
+DOMAIN-SUFFIX,dtci.technology
+DOMAIN-SUFFIX,espn.co.uk
+DOMAIN-SUFFIX,espn.com
+DOMAIN-SUFFIX,espn.net
+DOMAIN-SUFFIX,espncdn.com
+DOMAIN-SUFFIX,espnqa.com
+DOMAIN-SUFFIX,watchespn.com
+# > Epix
+DOMAIN-SUFFIX,epix.com
+# > Starz
+DOMAIN-SUFFIX,starz.com
+# > Philo
+DOMAIN-SUFFIX,philo.com
+# > FXNOW
+DOMAIN-SUFFIX,fxnow.fxnetworks.com
+# > TLC GO
+DOMAIN-SUFFIX,geolocation.onetrust.com
+# > HBO / Max
+DOMAIN-SUFFIX,max.com
+DOMAIN-SUFFIX,hbo.com
+DOMAIN-SUFFIX,hbogo.com
+DOMAIN-SUFFIX,hbomax.com
+DOMAIN-SUFFIX,hbomaxcdn.com
+DOMAIN-SUFFIX,hbonow.com
+DOMAIN-SUFFIX,maxgo.com
+DOMAIN-SUFFIX,discomax.com
+# > Shudder
+DOMAIN-SUFFIX,shudder.com
+# > BritBox
+DOMAIN-SUFFIX,vod-dash-ntham-comm-live.akamaized.net
+DOMAIN-SUFFIX,vod-dash-ntham-comm.live.cf.md.bbci.co.uk
+DOMAIN-SUFFIX,vod-hls-ntham-comm-live.akamaized.net
+DOMAIN-SUFFIX,vod-hls-ntham-comm.live.cf.md.bbci.co.uk
+DOMAIN-SUFFIX,britbox.com
+DOMAIN-SUFFIX,d2z3p34itxwaj7.cloudfront.net
+# > Crackle
+DOMAIN-SUFFIX,crackle.com
+# > CW TV
+DOMAIN-SUFFIX,cwtv.com
+# > A&E TV
+DOMAIN-SUFFIX,aetv.com
+DOMAIN-SUFFIX,ccpa-service.sp-prod.net
+# > NBA TV
+DOMAIN-SUFFIX,nba.com
+DOMAIN-SUFFIX,neulion-a.akamaihd.net
+DOMAIN-SUFFIX,nlnbamdnyc-a.akamaihd.net
+DOMAIN-SUFFIX,sdk.iad-03.braze.com
+DOMAIN-SUFFIX,nbaprop.sc.omtrdc.net
+DOMAIN-SUFFIX,nlnbaqos.neulion.com
+DOMAIN-SUFFIX,watchnba.cdnfastly.endeavorstreaming.net
+DOMAIN-SUFFIX,nbaapi.neulion.com
+DOMAIN-SUFFIX,nba-api-cdn.opin.media
+DOMAIN-SUFFIX,neulionqos-a.akamaihd.net
+DOMAIN-SUFFIX,neulion.com
+DOMAIN-SUFFIX,nbaprop.tt.omtrdc.net
+DOMAIN-SUFFIX,lion-nba-msl.akamaized.net
+DOMAIN-SUFFIX,nbanlds19vod.akamaized.net
+# > Fubo TV
+DOMAIN-SUFFIX,fubo.tv
+# > Tubi TV
+DOMAIN-SUFFIX,tubitv.com
+# > Sling TV
+DOMAIN-SUFFIX,dishworld.com
+DOMAIN-SUFFIX,slinginternational.com
+DOMAIN-SUFFIX,sling.com
+DOMAIN-SUFFIX,movenetworks.com
+DOMAIN-SUFFIX,movetv.com
+# > Pluto TV
+DOMAIN-SUFFIX,pluto.tv
+# > Acorn TV
+DOMAIN-SUFFIX,edge.api.brightcove.com
+DOMAIN-SUFFIX,api.rlje.net
+DOMAIN-SUFFIX,boltdns.net
+DOMAIN-SUFFIX,acorn.tv
+# > SHOWTIME
+DOMAIN-SUFFIX,sho.com
+DOMAIN-SUFFIX,showtime.com
+DOMAIN-SUFFIX,showtimeanytime.com
+# > encoreTVB
+DOMAIN-SUFFIX,encoretvb.com
+DOMAIN-SUFFIX,bcbolt446c5271-a.akamaihd.net
+DOMAIN-SUFFIX,videos-f.jwpsrv.com
+DOMAIN-SUFFIX,content.jwplatform.com
+DOMAIN-SUFFIX,edge.api.brightcove.com
+# > Funimation
+DOMAIN-SUFFIX,funimation.com
+# > Discovery+
+DOMAIN-SUFFIX,content-ause1-ur-discovery1.uplynk.com
+DOMAIN-SUFFIX,disco-api.com
+DOMAIN-SUFFIX,discoveryplus.com
+DOMAIN-SUFFIX,x-default-stgec.uplynk.com
+DOMAIN-SUFFIX,discovery.com
+DOMAIN-SUFFIX,discoveryplus.co.uk
+DOMAIN-SUFFIX,getblueshift.com
+DOMAIN-SUFFIX,litix.io
+DOMAIN-SUFFIX,mobile-collector.newrelic.com
+DOMAIN-SUFFIX,discovery.uplynk.com
+# > Paramount+
+DOMAIN-SUFFIX,paramountplus.com
+DOMAIN-SUFFIX,cbsi.live.ott.irdeto.com
+DOMAIN-SUFFIX,cbsplaylistserver.aws.syncbak.com
+DOMAIN-SUFFIX,cbsservice.aws.syncbak.com
+DOMAIN-SUFFIX,link.theplatform.com
+DOMAIN-SUFFIX,cbsaavideo.com
+DOMAIN-SUFFIX,cbsi.com
+DOMAIN-SUFFIX,cbsivideo.com
+DOMAIN-SUFFIX,pplusstatic.com
+# > Peacock TV
+DOMAIN-SUFFIX,peacocktv.com
+DOMAIN-SUFFIX,peacock.com
+# > Popcornflix
+DOMAIN-SUFFIX,popcornflix.com
+DOMAIN-SUFFIX,popcornflix-prod.cloud.seachange.com
+# > Crunchyroll
+DOMAIN-SUFFIX,crunchyroll.com
+DOMAIN-SUFFIX,vrv.co
+# > Directv Stream
+DOMAIN-SUFFIX,atttvnow.com
+# > KBS American
+DOMAIN-SUFFIX,kbs.co.kr
+# > KOCOWA
+DOMAIN-SUFFIX,kocowa.com
+# > F1TV
+DOMAIN-SUFFIX,f1prodlive.akamaized.net
+DOMAIN-SUFFIX,formula1.com
+# > CBC Gem
+DOMAIN-SUFFIX,cbc.ca
+DOMAIN-SUFFIX,cbchd1dynamicads-i.akamaihd.net
+DOMAIN-SUFFIX,cbclivedai5-i.akamaihd.net
+DOMAIN-SUFFIX,cbcnewshd-f.akamaihd.net
+DOMAIN-SUFFIX,cbcrcott-gem-key.akamaized.net
+DOMAIN-SUFFIX,cbcrcott-gem.akamaized.net
+DOMAIN-SUFFIX,go-mpulse.net
+DOMAIN-SUFFIX,theplatform.com
+# > Crave TV
+DOMAIN-SUFFIX,crave.ca
+DOMAIN-SUFFIX,go-mpulse.net
+DOMAIN-SUFFIX,9c9media.com
+# > HBO 
+DOMAIN-SUFFIX,cinemax.com
+DOMAIN-SUFFIX,forthethrone.com
+DOMAIN-SUFFIX,hbo.com
+DOMAIN-SUFFIX,hbogo.com
+DOMAIN-SUFFIX,hbomax.com
+DOMAIN-SUFFIX,hbomaxcdn.com
+DOMAIN-SUFFIX,hbonow.com
+DOMAIN-SUFFIX,maxgo.com
+# > DirecTV
+DOMAIN-SUFFIX,directvgo.com
+# > Funimation
+DOMAIN-SUFFIX,funimation.com
+
+# ---------- > Indian Media
+DOMAIN-SUFFIX,discoveryplus.in
+
+# ---------- > Korean Media
+# > Wavve
+DOMAIN-SUFFIX,wavve.com
+DOMAIN-SUFFIX,pooq.co.kr
+# > Tving
+DOMAIN-SUFFIX,tving.com
+# > Coupang Play
+DOMAIN-SUFFIX,coupangplay.com
+# > Naver TV
+DOMAIN-SUFFIX,naver.com
+DOMAIN-SUFFIX,navercorp.com
+DOMAIN-SUFFIX,pstatic.net
+DOMAIN-SUFFIX,smartmediarep.com
+# > Afreeca TV
+DOMAIN-SUFFIX,afreecatv.com
+# > KBS Domestic
+DOMAIN-SUFFIX,kbs.co.kr
+# > jtbc
+DOMAIN-SUFFIX,jtbc.co.kr

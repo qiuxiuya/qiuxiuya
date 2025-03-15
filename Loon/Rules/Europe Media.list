@@ -1,0 +1,125 @@
+# > EU:Rakuten TV
+DOMAIN-SUFFIX,rakuten.tv
+# > EU:Funimation
+DOMAIN-SUFFIX,funimation.com
+# > EU:SkyShowTime
+DOMAIN-SUFFIX,skyshowtimeuk.data.adobedc.net
+DOMAIN-SUFFIX,skyshowtime.com
+DOMAIN-SUFFIX,cssott.com
+DOMAIN-SUFFIX,4ac1dd56e493354be504f063e4ae3440a13c6776.cws.conviva.com
+# > EU:HBO Max
+DOMAIN-SUFFIX,max.com
+DOMAIN-SUFFIX,cinemax.com
+DOMAIN-SUFFIX,forthethrone.com
+DOMAIN-SUFFIX,hbo.com
+DOMAIN-SUFFIX,hbomax.com
+DOMAIN-SUFFIX,hbomaxcdn.com
+DOMAIN-SUFFIX,maxgo.com
+# > EuroSport
+DOMAIN-SUFFIX,europe-fastly-mediashield-live-prod.cdn.h264.io
+DOMAIN-SUFFIX,akamai.prod-live.h264.io
+DOMAIN-SUFFIX,eurosport-dlvr-ott.akamaized.net
+DOMAIN-SUFFIX,eu3-prod-images.disco-api.com
+DOMAIN-SUFFIX,eu3-prod.disco-api.com
+DOMAIN-SUFFIX,eurosportplayer.com
+DOMAIN-SUFFIX,eurosport.com
+DOMAIN-SUFFIX,eurosport.fr
+DOMAIN-SUFFIX,eurosport.es
+DOMAIN-SUFFIX,eurosport.ro
+DOMAIN-SUFFIX,eurosport.io
+DOMAIN-SUFFIX,eurosport.ru
+DOMAIN-SUFFIX,media-shield.live.eurosport.map.fastly.net
+DOMAIN-SUFFIX,eurosport-dlvr-ott-vod.akamaized.net
+# > ViaPlay
+DOMAIN-SUFFIX,i-viaplay-com.akamaized.net
+DOMAIN-SUFFIX,viaplay.com
+DOMAIN-SUFFIX,viaplay.pl
+DOMAIN-SUFFIX,mtg-api.com
+# > GB:Sky GO SkyGONZ
+DOMAIN-SUFFIX,sky.com
+# > GB:BritBox
+DOMAIN-SUFFIX,vod-dash-ntham-comm-live.akamaized.net
+DOMAIN-SUFFIX,vod-dash-ntham-comm.live.cf.md.bbci.co.uk
+DOMAIN-SUFFIX,vod-hls-ntham-comm-live.akamaized.net
+DOMAIN-SUFFIX,vod-hls-ntham-comm.live.cf.md.bbci.co.uk
+DOMAIN-SUFFIX,britbox.com
+DOMAIN-SUFFIX,d2z3p34itxwaj7.cloudfront.net
+# > GB:ITV Hub
+DOMAIN-SUFFIX,itvpnpmobile-a.akamaihd.net
+DOMAIN-SUFFIX,itv.com
+DOMAIN-SUFFIX,itvstatic.com
+# > GB:Channel 4 **
+DOMAIN-SUFFIX,channel4.com
+# > GB:Channel 5 **
+DOMAIN-SUFFIX,channel5.com
+# > GB:BBC
+DOMAIN-SUFFIX,aod-dash-uk-live.akamaized.net
+DOMAIN-SUFFIX,aod-hls-uk-live.akamaized.net
+DOMAIN-SUFFIX,as-dash-uk-live.akamaized.net
+DOMAIN-SUFFIX,as-hls-uk-live.akamaized.net
+DOMAIN-SUFFIX,vod-dash-uk-live.akamaized.net
+DOMAIN-SUFFIX,vod-dash-ww-live.akamaized.net
+DOMAIN-SUFFIX,vod-hls-uk-live.akamaized.net
+DOMAIN-SUFFIX,vod-sub-uk-live.akamaized.net
+DOMAIN-SUFFIX,vod-thumb-uk-live.akamaized.net
+DOMAIN-SUFFIX,vod-thumb-ww-live.akamaized.net
+DOMAIN-SUFFIX,vs-cmaf-push-uk-live.akamaized.net
+DOMAIN-SUFFIX,bbc
+DOMAIN-SUFFIX,bbc.co
+DOMAIN-SUFFIX,bbc.co.uk
+DOMAIN-SUFFIX,bbc.com
+DOMAIN-SUFFIX,bbc.in
+DOMAIN-SUFFIX,bbc.net.uk
+DOMAIN-SUFFIX,bbcchinese.com
+DOMAIN-SUFFIX,bbcfmt.hs.llnwd.net
+DOMAIN-SUFFIX,bbcfmt.s.llnwi.net
+DOMAIN-SUFFIX,bbci.co
+DOMAIN-SUFFIX,bbci.co.uk
+DOMAIN-SUFFIX,bbcmedia.co.uk
+DOMAIN-SUFFIX,bbcpersian.com
+DOMAIN-SUFFIX,bbcverticals.com
+DOMAIN-SUFFIX,bidi.net.uk
+# > GB:Discovery+
+DOMAIN-SUFFIX,content-ause1-ur-discovery1.uplynk.com
+DOMAIN-SUFFIX,disco-api.com
+DOMAIN-SUFFIX,discoveryplus.com
+DOMAIN-SUFFIX,x-default-stgec.uplynk.com
+DOMAIN-SUFFIX,discovery.com
+DOMAIN-SUFFIX,discoveryplus.co.uk
+DOMAIN-SUFFIX,getblueshift.com
+DOMAIN-SUFFIX,litix.io
+DOMAIN-SUFFIX,mobile-collector.newrelic.com
+DOMAIN-SUFFIX,discovery.uplynk.com
+# > FR:Salto
+DOMAIN-SUFFIX,salto.fr
+# > FR:Canal+
+DOMAIN-SUFFIX,canalplus.com
+# > FR:Molotov
+DOMAIN-SUFFIX,molotov.tv
+# > FR:France.tv
+DOMAIN-SUFFIX,ftven.fr
+# > DE:Joyn
+DOMAIN-SUFFIX,joyn.de
+# > DE:Sky
+DOMAIN-SUFFIX,sky.de
+DOMAIN-SUFFIX,edge.api.brightcove.com
+# > DE:ZDF
+DOMAIN-SUFFIX,zdf.de
+# > NL:videoland
+DOMAIN-SUFFIX,videoland.com
+# > NL:NPO
+DOMAIN-SUFFIX,npo.nl
+# > IT Rai Play
+DOMAIN-SUFFIX,mediapolisvod.rai.it
+# > RU:Amediateka
+DOMAIN-SUFFIX,amediateka.ru
+# > UA:MEGOGO
+DOMAIN-SUFFIX,megogo.net
+DOMAIN-SUFFIX,vcdn.biz
+# > CH:Sky
+DOMAIN-SUFFIX,sky.ch
+DOMAIN-SUFFIX,zahs.tv
+# > TR:digiturkplay
+DOMAIN-SUFFIX,digiturkplay.com
+DOMAIN-SUFFIX,dt-int-gurme-hls.mncdn.com
+DOMAIN-SUFFIX,dt-live-int.akamaized.net

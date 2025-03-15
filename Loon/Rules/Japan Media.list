@@ -1,0 +1,92 @@
+# > NHK+
+DOMAIN-SUFFIX,nhk.jp
+DOMAIN-SUFFIX,nhk.or.jp
+# > DMM
+DOMAIN-SUFFIX,dmm-extension.com
+DOMAIN-SUFFIX,dmm.co.jp
+DOMAIN-SUFFIX,dmm.com
+DOMAIN-SUFFIX,videomarket.jp
+DOMAIN-SUFFIX,p-smith.com
+DOMAIN-SUFFIX,vmdash-cenc.akamaized.net
+DOMAIN-SUFFIX,img.vm-movie.jp
+# > Abema
+DOMAIN-SUFFIX,abema.io
+DOMAIN-SUFFIX,abema.tv
+DOMAIN-SUFFIX,ds-linear-abematv.akamaized.net
+DOMAIN-SUFFIX,linear-abematv.akamaized.net
+DOMAIN-SUFFIX,ds-vod-abematv.akamaized.net
+DOMAIN-SUFFIX,vod-abematv.akamaized.net
+DOMAIN-SUFFIX,vod-playout-abematv.akamaized.net
+DOMAIN-SUFFIX,ameba.jp
+DOMAIN-SUFFIX,hayabusa.io
+DOMAIN-SUFFIX,bucketeer.jp
+DOMAIN-SUFFIX,abema.adx.promo
+DOMAIN-SUFFIX,hayabusa.media
+DOMAIN-SUFFIX,abema-tv.com
+# > NicoNico
+DOMAIN-SUFFIX,dmc.nico
+DOMAIN-SUFFIX,nicovideo.jp
+DOMAIN-SUFFIX,nimg.jp
+# > Telasa
+DOMAIN-SUFFIX,telasa.jp
+DOMAIN-SUFFIX,kddi-video.com
+DOMAIN-SUFFIX,videopass.jp
+DOMAIN-SUFFIX,d2lmsumy47c8as.cloudfront.net
+# > Paravi
+DOMAIN-SUFFIX,paravi.jp
+# > U-NEXT
+DOMAIN-SUFFIX,unext.jp
+DOMAIN-SUFFIX,nxtv.jp
+# > Hulu Japan
+DOMAIN-SUFFIX,happyon.jp
+DOMAIN-SUFFIX,hulu.jp
+DOMAIN-SUFFIX,prod.hjholdings.tv
+DOMAIN-SUFFIX,streaks.jp
+DOMAIN-SUFFIX,yb.uncn.jp
+DOMAIN-SUFFIX,hjholdings.jp
+# > TVer
+DOMAIN-SUFFIX,tver.jp
+DOMAIN-SUFFIX,edge.api.brightcove.com
+DOMAIN-SUFFIX,players.brightcove.net
+DOMAIN-SUFFIX,gorin.jp
+DOMAIN-SUFFIX,screens-lab.jp
+DOMAIN-SUFFIX,tver.co.jp
+DOMAIN-SUFFIX,dogatch.jp
+# > GYAO!
+DOMAIN-SUFFIX,gyao.yahoo.co.jp
+# > WOWOW
+DOMAIN-SUFFIX,wowow.co.jp
+# > Videomarket
+DOMAIN-SUFFIX,videomarket.jp
+# > D Anime Store
+DOMAIN-SUFFIX,animestore.docomo.ne.jp
+# > Fuji TV
+DOMAIN-SUFFIX,fujitv.co.jp
+DOMAIN-SUFFIX,stream.ne.jp
+# > Radiko
+DOMAIN-SUFFIX,radiko.jp
+DOMAIN-SUFFIX,radionikkei.jp
+DOMAIN-SUFFIX,smartstream.ne.jp
+# > Karaoke@DAM
+DOMAIN-SUFFIX,clubdam.com
+# > J:com On Demand
+DOMAIN-SUFFIX,id.zaq.ne.jp
+# > AnimeFesta
+DOMAIN-SUFFIX,api-animefesta.iowl.jp
+# > Lemino
+DOMAIN-SUFFIX,if.lemino.docomo.ne.jp
+# > Rakuten TV JP
+DOMAIN-SUFFIX,rakuten.co.jp
+# > Games
+DOMAIN-SUFFIX,cygames.jp
+DOMAIN-SUFFIX,konosubafd.jp
+DOMAIN-SUFFIX,colorfulpalette.org
+DOMAIN-SUFFIX,worldflipper.jp
+DOMAIN-SUFFIX,jujutsuphanpara.jp
+# > Mora
+DOMAIN-SUFFIX,mora.jp
+# > Music.jp
+DOMAIN-SUFFIX,music.jp
+DOMAIN-SUFFIX,music-book.jp
+# > Reads 
+DOMAIN-SUFFIX,data-cloudauthoring.magazine.rakuten.co.jp
