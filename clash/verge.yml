@@ -20,22 +20,12 @@ dns:
   'geosite:cn': [https://1.12.12.12/dns-query]
   'geosite:gfw,geolocation-!cn': [https://8.8.8.8/dns-query]
 
-geodata-mode: true
-geox-url:
-  geoip: "https://mirror.ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat"
-  geosite: "https://mirror.ghproxy.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat"
-  mmdb: "https://mirror.ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/Country.mmdb"
-  asn: "https://mirror.ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/GeoLite2-ASN.mmdb"
-
-profile: { store-selected: true, store-fake-ip: false }
-sniffer: { enable: true, sniff: { HTTP: { ports: [80], override-destination: true }, TLS: { ports: [443, 8443] }, QUIC: { ports: [443, 8443] } } }
-
 proxy-groups:
-  - {name: Global, type: select, include-all: true}
+  - {name: GLOBAL, type: select, include-all: true}
       
 rules:
   - GEOIP,lan,DIRECT,no-resolve
   - GEOSITE,CN,DIRECT
-  - GEOSITE,geolocation-!cn,Global
+  - GEOSITE,geolocation-!cn,GLOBAL
   - GEOIP,CN,DIRECT
-  - MATCH,Global
+  - MATCH,GLOBAL
