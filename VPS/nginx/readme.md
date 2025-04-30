@@ -19,3 +19,9 @@ certbot --nginx
 第一次使用会要求填入邮箱（~~随便写都行~~），同意协议等.
 
 拉完证书certbot会自动修改nginx配置文件并重启
+
+删除证书
+
+```
+certbot delete
+```
