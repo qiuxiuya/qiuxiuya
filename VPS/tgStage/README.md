@@ -1,4 +1,4 @@
-# 本Shell基于[[csznet/tgState](https://github.com/csznet/tgState)]的api进行开发****
+# 本Shell基于[[csznet/tgState](https://github.com/csznet/tgState)]的api进行开发
 
 ```
 bash post.sh -p 你的文件路径
@@ -10,9 +10,8 @@ bash post.sh -p 你的文件路径
 大文件会先切片后上传，**请保证有足够的硬盘空间**
 
 
+
 ## 以下为tgStage的Reame
-
-
 
 ## tgStatetgState
 
