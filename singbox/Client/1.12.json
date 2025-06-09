@@ -1,0 +1,169 @@
+{
+    "log": {
+        "disabled": false,
+        "level": "error",
+        "timestamp": true
+    },
+    "dns": {
+        "servers": [
+            {
+                "tag": "google",
+                "type": "https",
+                "server": "8.8.8.8",
+                "detour": "Global"
+            },
+            {
+                "tag": "local",
+                "type": "https",
+                "server": "doh.pub",
+                "domain_resolver": "udp"
+            },
+            {
+                "tag": "udp",
+                "type": "udp",
+                "server": "223.5.5.5"
+            },
+            {
+                "tag": "fakeip",
+                "type": "fakeip",
+                "inet4_range": "198.18.0.0/15",
+                "inet6_range": "fc00::/18"
+            }
+        ],
+        "rules": [
+            {
+                "clash_mode": "Direct",
+                "action": "route",
+                "server": "local"
+            },
+            {
+                "clash_mode": "Global",
+                "action": "route",
+                "server": "fakeip"
+            },
+            {
+                "query_type": [
+                    "A",
+                    "AAAA"
+                ],
+                "action": "route",
+                "server": "fakeip",
+                "rewrite_ttl": 1
+            },
+            {
+                "rule_set": [
+                    "geosite-cn"
+                ],
+                "action": "route",
+                "server": "local"
+            }
+        ],
+        "strategy": "prefer_ipv4",
+        "final": "google",
+        "independent_cache": true
+    },
+    "inbounds": [
+        {
+            "tag": "mixed",
+            "type": "mixed",
+            "listen": "127.0.0.1",
+            "listen_port": 2080,
+            "set_system_proxy": false
+        },
+        {
+            "tag": "tun",
+            "type": "tun",
+            "address": [
+                "172.18.0.1/30",
+                "fdfe:dcba:9876::1/126"
+            ],
+            "stack": "mixed",
+            "auto_route": true
+        }
+    ],
+    "outbounds": [
+        {
+            "tag": "direct",
+            "type": "direct"
+        },
+        {
+            "tag": "Global",
+            "type": "selector",
+            "outbounds": [],
+            "interrupt_exist_connections": true
+        }
+    ],
+    "route": {
+        "default_domain_resolver": {
+            "server": "udp"
+        },
+        "rules": [
+            {
+                "inbound": [
+                    "mixed",
+                    "tun"
+                ],
+                "action": "sniff",
+                "timeout": "500ms"
+            },
+            {
+                "protocol": "dns",
+                "action": "hijack-dns"
+            },
+            {
+                "ip_is_private": true,
+                "action": "route",
+                "outbound": "direct"
+            },
+            {
+                "clash_mode": "Direct",
+                "action": "route",
+                "outbound": "direct"
+            },
+            {
+                "clash_mode": "Global",
+                "action": "route",
+                "outbound": "Global"
+            },
+            {
+                "rule_set": [
+                    "ad"
+                ],
+                "action": "reject"
+            },
+            {
+                "rule_set": [
+                    "geosite-cn",
+                    "geoip-cn"
+                ],
+                "action": "route",
+                "outbound": "direct"
+            }
+        ],
+        "rule_set": [
+            {
+                "tag": "ad",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://raw.githubusercontent.com/Cats-Team/AdRules/main/adrules-singbox.srs",
+                "download_detour": "Global"
+            },
+            {
+                "tag": "geosite-cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://github.com/lyc8503/sing-box-rules/raw/refs/heads/rule-set-geosite/geosite-cn.srs",
+                "download_detour": "Global"
+            },
+            {
+                "tag": "geoip-cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://github.com/lyc8503/sing-box-rules/raw/refs/heads/rule-set-geoip/geoip-cn.srs",
+                "download_detour": "Global"
+            }
+        ],
+        "auto_detect_interface": true,
+        "final": "Global"
+    }
+}
