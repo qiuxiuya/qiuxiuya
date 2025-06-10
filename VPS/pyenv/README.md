@@ -36,6 +36,18 @@ pyenv install install 3.12.0
 
 此过程依性能决定，需要编译较长的时间.
 
+### 应用你安装的Python
+
+```
+pyenv global 3.12.0
+```
+
+### 更新pip
+
+```
+pip install --upgrade pip
+```
+
 ### 卸载编译前安装的依赖
 
 ```
