@@ -1,0 +1,141 @@
+{
+    "log": {
+        "disabled": true,
+        "level": "info",
+        "timestamp": true
+    },
+    "dns": {
+        "servers": [
+            {
+                "type": "h3",
+                "tag": "google",
+                "server": "8.8.8.8"
+            }
+        ],
+        "final": "google",
+        "disable_cache": true,
+        "strategy": "prefer_ipv4",
+        "independent_cache": false
+    },
+    "route": {
+        "default_domain_resolver": {
+            "server": "google"
+        },
+        "rules": [
+            {
+                "inbound": [
+                    "ss",
+                    "Trojan"
+                ],
+                "action": "sniff",
+                "timeout": "500ms"
+            },
+            {
+                "action": "resolve"
+            },
+            {
+                "protocol": "dns",
+                "action": "hijack-dns"
+            },
+            {
+                "domain_suffix": [
+                    "chatgpt.com",
+                    "openai.com"
+                ],
+                "outbound": "Unlock"
+            },
+            {
+                "inbound": [
+                    "ss",
+                    "Trojan"
+                ],
+                "outbound": "direct"
+            }
+        ]
+    },
+    "inbounds": [
+        {
+            "type": "shadowsocks",
+            "tag": "ss",
+            "listen": "::",
+            "listen_port": 11451,
+            "method": "aes-128-gcm",
+            "password": "密码"  //可使用 sing-box generate rand --base64 16 生成
+        },
+        {
+            "type": "trojan",
+            "tag": "Trojan",
+            "listen": "::",
+            "listen_port": 11452,
+            "sniff": true,
+            "sniff_override_destination": true,
+            "transport": {
+                "type": "ws",
+                "path": "/", //ws路径可自由设置
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            },
+            "users": [
+                {
+                    "password": "密码" //Trojan密码无要求
+                }
+            ],
+            "tls": {
+                "enabled": true,
+                "server_name": "bing.com",
+                "certificate_path": "/var/lib/sing-box/bing.crt",
+                "key_path": "/var/lib/sing-box/bing.key"  //自签证书可用 openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout /var/lib/sing-box/bing.key -out /var/lib/sing-box/bing.crt -subj "/C=US/CN=www.bing.com" 生成
+            },
+            "multiplex": {
+                "enabled": true,
+                "padding": false
+            }
+        }
+    ],
+    "outbounds": [
+        {
+            "type": "direct",
+            "tag": "direct"
+        },
+        {
+            "type": "shadowsocks", //解锁用ss 按需分流
+            "tag": "Unlock",
+            "server": "地址",
+            "server_port": 11451,
+            "method": "aes-128-gcm",
+            "password": "密码"
+        }
+    ],
+    "endpoints": [ //WARP 按需分流
+        {
+            "type": "wireguard",
+            "tag": "WARP",
+            "system": false,
+            "name": "wg0",
+            "mtu": 1280,
+            "address": [
+                "172.16.0.2/32",
+                "2606:4700:110:8362:8164:120a:2841:6cd3/128"
+            ],
+            "private_key": "iKkSqnX7NokytWdIYyFNopTogmjNTQVQatWqqnncmH0=",
+            "listen_port": 10000,
+            "peers": [
+                {
+                    "address": "engage.cloudflareclient.com",
+                    "port": 2408,
+                    "public_key": "bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=",
+                    "allowed_ips": [
+                        "0.0.0.0/0",
+                        "::/0"
+                    ],
+                    "persistent_keepalive_interval": 30,
+                    "reserved": [
+                        159,
+                        237,
+                        245
+                    ]
+                }
+            ]
+        }
+    ]
+}
