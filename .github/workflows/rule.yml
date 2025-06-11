@@ -4,11 +4,6 @@ on:
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch to update'
-        required: true
-        default: 'rules'
 
 jobs:
   update-rules:
@@ -18,9 +13,9 @@ jobs:
       - name: Checkout rules branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch || 'rules' }}
+          ref: rules
 
-      - name: geosite
+      - name: Download and rename geosite rules
         run: |
           mkdir -p singbox/geosite
           for url in $(curl -s https://api.github.com/repos/lyc8503/sing-box-rules/contents/rule-set-geosite | jq -r '.[].download_url'); do
@@ -29,11 +24,11 @@ jobs:
             curl -L "$url" -o "singbox/geosite/$new_filename"
           done
 
-      - name: AD
+      - name: Download original rules
         run: |
           mkdir -p singbox Mihomo
           curl -L https://raw.githubusercontent.com/Cats-Team/AdRules/main/adrules-singbox.srs -o singbox/ad.srs
-          curl -L https://raw.githubusercontent.com/Cats-Team/AdRules/main/adrules-mihomo.mrs -o mihomo/ad.mrs
+          curl -L https://raw.githubusercontent.com/Cats-Team/AdRules/main/adrules-mihomo.mrs -o Mihomo/ad.mrs
 
       - name: Check for changes
         run: |
@@ -46,5 +41,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add singbox/geosite/ singbox/ad.srs Mihomo/ad.mrs
-          git commit --allow-empty -m ""
-          git push origin ${{ github.event.inputs.branch || 'rules' }}
+          git commit --allow-empty -m "Update ad and geosite rules"
+          git push origin rules
