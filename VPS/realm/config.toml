@@ -1,12 +1,10 @@
 [network]
 use_udp = true
-zero_copy = true
-fast_open = true
  
 [[endpoints]]
 listen = "0.0.0.0:233"
 remote = "114.5.1.4:233"
 
 #[[endpoints]]  #添加多个转发
-#listen = "0.0.0.0:443"
-#remote = "1.1.1.1:443"
+#listen = "[::]:443"
+#remote = "[2001:4860:4860::8888]:443"
