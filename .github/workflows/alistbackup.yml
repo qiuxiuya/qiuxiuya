@@ -1,14 +1,14 @@
-name: Push Alist v3.39.4 to back/alist
+name: Push Alist v3.39.4 to backup/alist
 
 on:
-  workflow_dispatch:  # 手动触发
+  workflow_dispatch:
 
 jobs:
   download-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout target branch (back)
+      - name: Checkout target branch (backup)
         uses: actions/checkout@v4
         with:
           ref: backup
@@ -21,10 +21,10 @@ jobs:
           out-file-path: alist/
           extract: false
 
-      - name: Commit and push to back branch
+      - name: Commit and push to backup branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add alist/
-          git commit -m "Add Alist v3.39.4 release files to back/alist" || echo "No changes to commit"
-          git push origin back
+          git commit -m "Add Alist v3.39.4 release files to backup/alist" || echo "No changes to commit"
+          git push origin backup
