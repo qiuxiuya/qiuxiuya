@@ -1,29 +1,20 @@
 {
     "log": {
         "disabled": false,
-        "level": "error",
+        "level": "info",
         "timestamp": true
-    },"experimental": {
-        "cache_file": {
-            "enabled": true,
-            "store_fakeip": true
-        },
-        "clash_api": {
-            "default_mode": "Rule",
-            "external_controller": "127.0.0.1:9090"
-        }
-      },
+    },
     "dns": {
         "servers": [
             {
                 "tag": "google",
-                "type": "h3",
+                "type": "https",
                 "server": "8.8.8.8",
                 "detour": "Global"
             },
             {
                 "tag": "local",
-                "type": "h3",
+                "type": "https",
                 "server": "223.5.5.5"
             },
             {
@@ -45,6 +36,10 @@
                 "server": "fakeip"
             },
             {
+                "query_type": "HTTPS",
+                "action": "reject"
+            },
+            {
                 "query_type": [
                     "A",
                     "AAAA"
@@ -54,79 +49,44 @@
                 "rewrite_ttl": 1
             },
             {
-                "rule_set": [
-                    "geosite-cn"
-                ],
+                "rule_set": "geosite-cn",
                 "action": "route",
                 "server": "local"
             }
         ],
-        "strategy": "prefer_ipv4",
         "final": "google",
         "independent_cache": true
     },
-    "inbounds": [
-        {
-            "tag": "mixed",
-            "type": "mixed",
-            "listen": "127.0.0.1",
-            "listen_port": 2080,
-            "set_system_proxy": false
-        },
-        {
-            "tag": "tun",
-            "type": "tun",
-            "address": [
-                "172.18.0.1/30",
-                "fdfe:dcba:9876::1/126"
-            ],
-            "platform": {
-                "http_proxy": {
-                    "enabled": true,
-                    "server": "127.0.0.1",
-                    "server_port": 2080
-                }
-            },
-            "stack": "mixed",
-            "auto_route": true
-        }
-    ],
-    "outbounds": [
-        {
-            "tag": "direct",
-            "type": "direct"
-        },
-        {
-            "tag": "Global",
-            "type": "selector",
-            "outbounds": [],
-            "interrupt_exist_connections": true
-        }
-    ],
     "route": {
         "default_domain_resolver": {
             "server": "local"
         },
         "rules": [
             {
-                "inbound": [
-                    "mixed",
-                    "tun"
-                ],
                 "action": "sniff",
+                "sniffer": [
+                    "http",
+                    "tls",
+                    "quic",
+                    "dns"
+                ],
                 "timeout": "500ms"
             },
             {
-                "protocol": "dns",
+                "type": "logical",
+                "mode": "or",
+                "rules": [
+                    {
+                        "port": 53
+                    },
+                    {
+                        "protocol": "dns"
+                    }
+                ],
                 "action": "hijack-dns"
             },
             {
                 "ip_is_private": true,
-                "action": "route",
-                "outbound": "direct"
-            },
-            {
-                "clash_mode": "Direct",
                 "action": "route",
                 "outbound": "direct"
             },
@@ -136,6 +96,11 @@
                 "outbound": "Global"
             },
             {
+                "clash_mode": "Direct",
+                "action": "route",
+                "outbound": "direct"
+            },
+            {
                 "rule_set": [
                     "ad"
                 ],
@@ -143,8 +108,8 @@
             },
             {
                 "rule_set": [
-                    "geosite-cn",
-                    "geoip-cn"
+                    "geoip-cn",
+                    "geosite-cn"
                 ],
                 "action": "route",
                 "outbound": "direct"
@@ -173,7 +138,50 @@
                 "download_detour": "Global"
             }
         ],
-        "auto_detect_interface": true,
-        "final": "Global"
+        "final": "Global",
+        "auto_detect_interface": true
+    },
+    "outbounds": [
+        {
+            "tag": "Global",
+            "type": "selector",
+            "outbounds": []
+        },
+        {
+            "tag": "direct",
+            "type": "direct"
+        }
+    ],
+    "inbounds": [
+        {
+            "type": "tun",
+            "address": [
+                "172.19.0.0/30",
+                "fdfe:dcba:9876::0/126"
+            ],
+            "stack": "mixed",
+            "auto_route": true,
+            "platform": {
+                "http_proxy": {
+                    "enabled": true,
+                    "server": "127.0.0.1",
+                    "server_port": 2080
+                }
+            }
+        },
+        {
+            "type": "mixed",
+            "listen": "127.0.0.1",
+            "listen_port": 2080
+        }
+    ],
+    "experimental": {
+        "clash_api": {
+            "external_controller": "127.0.0.1:9090"
+        },
+        "cache_file": {
+            "enabled": true,
+            "store_fakeip": true
+        }
     }
 }
