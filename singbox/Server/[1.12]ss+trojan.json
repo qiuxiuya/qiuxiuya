@@ -1,57 +1,47 @@
 {
     "log": {
-        "disabled": true,
+        "disabled": false,
         "level": "info",
         "timestamp": true
     },
     "dns": {
         "servers": [
             {
-                "type": "h3",
                 "tag": "google",
+                "type": "https",
                 "server": "8.8.8.8"
+            },
+            {
+                "tag": "unlock",
+                "type": "udp",
+                "server": "223.5.5.5"
+            },
+            {
+                "tag": "fakeip",
+                "type": "fakeip",
+                "inet4_range": "198.18.0.0/15",
+                "inet6_range": "fc00::/18"
+            }
+        ],
+        "rules": [
+            {
+                "query_type": "HTTPS",
+                "action": "reject"
+            },
+            {
+                "query_type": [
+                    "A",
+                    "AAAA"
+                ],
+                "action": "route",
+                "server": "fakeip",
+                "rewrite_ttl": 1
             }
         ],
         "final": "google",
         "disable_cache": true,
         "strategy": "prefer_ipv4",
-        "independent_cache": false
-    },
-    "route": {
-        "default_domain_resolver": {
-            "server": "google"
-        },
-        "rules": [
-            {
-                "inbound": [
-                    "ss",
-                    "Trojan"
-                ],
-                "action": "sniff",
-                "timeout": "500ms"
-            },
-            {
-                "action": "resolve"
-            },
-            {
-                "protocol": "dns",
-                "action": "hijack-dns"
-            },
-            {
-                "domain_suffix": [
-                    "chatgpt.com",
-                    "openai.com"
-                ],
-                "outbound": "Unlock"
-            },
-            {
-                "inbound": [
-                    "ss",
-                    "Trojan"
-                ],
-                "outbound": "direct"
-            }
-        ]
+        "independent_cache": true
     },
     "inbounds": [
         {
@@ -85,17 +75,47 @@
                 "server_name": "bing.com",
                 "certificate_path": "/var/lib/sing-box/bing.crt",
                 "key_path": "/var/lib/sing-box/bing.key"  //自签证书可用 openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout /var/lib/sing-box/bing.key -out /var/lib/sing-box/bing.crt -subj "/C=US/CN=www.bing.com" 生成
-            },
-            "multiplex": {
-                "enabled": true,
-                "padding": false
             }
         }
     ],
+    "route": {
+        "default_domain_resolver": {
+            "server": "google"
+        },
+        "rules": [
+            {
+                "action": "sniff",
+                "sniffer": [
+                    "http",
+                    "tls",
+                    "quic",
+                    "dns"
+                ],
+                "timeout": "500ms"
+            },
+            {
+                "action": "resolve"
+            },
+            {
+                "type": "logical",
+                "mode": "or",
+                "rules": [
+                    {
+                        "port": 53
+                    },
+                    {
+                        "protocol": "dns"
+                    }
+                ],
+                "action": "hijack-dns"
+            }
+        ],
+        "auto_detect_interface": true
+    },
     "outbounds": [
         {
-            "type": "direct",
-            "tag": "direct"
+            "tag": "direct",
+            "type": "direct"
         },
         {
             "type": "shadowsocks", //解锁用ss 按需分流
@@ -106,7 +126,7 @@
             "password": "密码"
         }
     ],
-    "endpoints": [ //WARP 按需分流
+    "endpoints": [
         {
             "type": "wireguard",
             "tag": "WARP",
