@@ -1,0 +1,47 @@
+mixed-port: 2080
+allow-lan: true
+external-controller: 127.0.0.1:9090
+unified-delay: true
+ipv6: true
+
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  parse-pure-ip: true
+  override-destination: true
+  sniff:
+  force-domain:
+    - "*.*"
+    - "*"
+dns:
+  enable: true
+  ipv6: true
+  enhanced-mode: fake-ip
+  listen: :1053
+  fake-ip-range:
+    - "198.18.0.0/15"
+    - "fc00::/18"
+  default-nameserver: [1.12.12.12]
+  nameserver: [1.12.12.12]
+  nameserver-policy:
+  "geosite:cn": [https://1.12.12.12/dns-query]
+  "geosite:gfw,geolocation-!cn": [https://8.8.8.8/dns-query]
+
+find-process-mode: strict
+profile:
+  store-selected: false
+geodata-mode: true
+
+proxy-groups:
+  - { name: GLOBAL, type: select, include-all: true }
+
+rule-providers:
+  AD: {<<: *c, path: ./rules/AD.list, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/Reject.list}
+
+rules:
+  - RULE-SET,AD,REJECT
+  - GEOIP,lan,DIRECT,no-resolve
+  - GEOSITE,CN,DIRECT
+  - GEOSITE,geolocation-!cn,GLOBAL
+  - GEOIP,CN,DIRECT
+  - MATCH,GLOBAL
