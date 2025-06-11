@@ -55,6 +55,7 @@
             }
         ],
         "final": "google",
+        "strategy": "prefer_ipv4",
         "independent_cache": true
     },
     "route": {
