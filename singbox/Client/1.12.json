@@ -56,7 +56,6 @@
         ],
         "final": "google",
         "strategy": "prefer_ipv4",
-        "client_subnet": "223.5.5.5",
         "independent_cache": true
     },
     "route": {
@@ -157,10 +156,7 @@
     "inbounds": [
         {
             "type": "tun",
-            "address": [
-                "172.19.0.0/30",
-                "fdfe:dcba:9876::0/126"
-            ],
+            "address": "172.19.0.0/30",
             "stack": "mixed",
             "auto_route": true,
             "platform": {
