@@ -148,7 +148,11 @@
         },
         {
             "tag": "direct",
-            "type": "direct"
+            "type": "direct",
+            "domain_resolver": {
+                "server": "local",
+                "strategy": "prefer_ipv4"
+            }
         }
     ],
     "inbounds": [
