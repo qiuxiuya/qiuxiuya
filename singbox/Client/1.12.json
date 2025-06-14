@@ -65,11 +65,9 @@
         "rules": [
             {
                 "action": "sniff",
-                "sniffer": [
-                    "http",
-                    "tls",
-                    "quic",
-                    "dns"
+                "inbounds": [
+                    "tun",
+                    "mixed"
                 ],
                 "timeout": "500ms"
             },
@@ -121,7 +119,7 @@
                 "tag": "ad",
                 "type": "remote",
                 "format": "binary",
-                "url": "https://raw.githubusercontent.com/Cats-Team/AdRules/main/adrules-singbox.srs",
+                "url": "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblocksingbox.srs",
                 "download_detour": "Global"
             },
             {
@@ -135,7 +133,7 @@
                 "tag": "geoip-cn",
                 "type": "remote",
                 "format": "binary",
-                "url": "https://github.com/lyc8503/sing-box-rules/raw/refs/heads/rule-set-geoip/geoip-cn.srs",
+                "url": "https://raw.githubusercontent.com/qiuxiuya/Rules/refs/heads/geoip/geoip.srs",
                 "download_detour": "Global"
             }
         ],
@@ -156,7 +154,10 @@
     "inbounds": [
         {
             "type": "tun",
-            "address": "172.19.0.0/30",
+            "address": [
+                "172.19.0.0/30",
+                "fdfe:dcba:9876::0/126"
+            ],
             "stack": "mixed",
             "auto_route": true,
             "platform": {
