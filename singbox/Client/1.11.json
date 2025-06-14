@@ -57,6 +57,7 @@
             }
         ],
         "final": "google",
+        "strategy": "prefer_ipv4",
         "independent_cache": true
     },
     "route": {
@@ -146,11 +147,7 @@
         },
         {
             "tag": "direct",
-            "type": "direct",
-            "domain_resolver": {
-                "server": "local",
-                "strategy": "prefer_ipv4"
-            }
+            "type": "direct"
         }
     ],
     "inbounds": [

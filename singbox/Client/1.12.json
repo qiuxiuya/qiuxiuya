@@ -18,6 +18,11 @@
                 "server": "223.5.5.5"
             },
             {
+                "tag": "udp",
+                "type":"udp",
+                "server": "119.29.29.29"
+            },
+            {
                 "tag": "fakeip",
                 "type": "fakeip",
                 "inet4_range": "198.18.0.0/15",
@@ -52,6 +57,12 @@
                 "rule_set": "geosite-cn",
                 "action": "route",
                 "server": "local"
+            },
+            {
+                "action": "route",
+                "server": "udp",
+                "rewrite_ttl": 5,
+                "disable_cache": true
             }
         ],
         "final": "google",
@@ -60,7 +71,7 @@
     },
     "route": {
         "default_domain_resolver": {
-            "server": "local"
+            "server": "udp"
         },
         "rules": [
             {
