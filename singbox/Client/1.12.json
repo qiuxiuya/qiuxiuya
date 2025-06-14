@@ -65,7 +65,7 @@
         "rules": [
             {
                 "action": "sniff",
-                "inbounds": [
+                "inbound": [
                     "tun",
                     "mixed"
                 ],
