@@ -19,7 +19,7 @@
             },
             {
                 "tag": "udp",
-                "type":"udp",
+                "type": "udp",
                 "server": "119.29.29.29"
             },
             {
@@ -52,6 +52,11 @@
                 "action": "route",
                 "server": "fakeip",
                 "rewrite_ttl": 1
+            },
+            {
+                "rule_set": "geosite-!cn",
+                "action": "route",
+                "server": "google"
             },
             {
                 "rule_set": "geosite-cn",
@@ -118,6 +123,13 @@
             },
             {
                 "rule_set": [
+                    "geosite-!cn"
+                ],
+                "action": "route",
+                "outbound": "Global"
+            },
+            {
+                "rule_set": [
                     "geoip-cn",
                     "geosite-cn"
                 ],
@@ -137,7 +149,14 @@
                 "tag": "geosite-cn",
                 "type": "remote",
                 "format": "binary",
-                "url": "https://github.com/lyc8503/sing-box-rules/raw/refs/heads/rule-set-geosite/geosite-cn.srs",
+                "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geosite/cn.srs",
+                "download_detour": "Global"
+            },
+            {
+                "tag": "geosite-!cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geosite/geolocation-!cn.srs",
                 "download_detour": "Global"
             },
             {
