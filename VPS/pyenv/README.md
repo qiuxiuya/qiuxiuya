@@ -7,10 +7,15 @@ curl -fsSL https://pyenv.run | bash
 ### 刷新环境
 
 ```
-export PATH="HOME/.pyenv/bin:HOME/.pyenv/bin:PATH"
-eval "$(pyenv init --path)"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+echo 'eval "$(pyenv init - bash)"' >> ~/.bashrc
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.profile
+echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.profile
+echo 'eval "$(pyenv init - bash)"' >> ~/.profile
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bash_profile
+echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile
+echo 'eval "$(pyenv init - bash)"' >> ~/.bash_profile
 source ~/.bashrc
 ```
 
@@ -31,7 +36,7 @@ pyenv install --list | grep -E '^\s*[0-9]+\.[0-9]+\.[0-9]+$'
 ### 安装所需要的版本(比如3.12.0)
 
 ```
-pyenv install install 3.12.0
+pyenv install 3.12.0
 ```
 
 此过程依性能决定，需要编译较长的时间.
