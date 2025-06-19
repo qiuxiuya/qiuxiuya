@@ -162,6 +162,7 @@
         {
             "tag": "Global",
             "type": "selector",
+            "interrupt_exist_connections": true,
             "outbounds": []
         },
         {
