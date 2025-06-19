@@ -8,13 +8,13 @@
         "servers": [
             {
                 "tag": "google",
-                "type": "https",
+                "type": "tls",
                 "server": "8.8.8.8",
                 "detour": "Global"
             },
             {
                 "tag": "local",
-                "type": "https",
+                "type": "tls",
                 "server": "223.5.5.5"
             },
             {
