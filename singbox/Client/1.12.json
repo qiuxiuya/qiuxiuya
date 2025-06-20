@@ -20,7 +20,7 @@
             {
                 "tag": "udp",
                 "type": "udp",
-                "server": "119.29.29.29"
+                "server": "114.114.114.114"
             },
             {
                 "tag": "fakeip",
