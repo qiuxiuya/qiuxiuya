@@ -81,9 +81,11 @@
         "rules": [
             {
                 "action": "sniff",
-                "inbound": [
-                    "tun",
-                    "mixed"
+                "sniffer": [
+                    "http",
+                    "tls",
+                    "quic",
+                    "dns"
                 ],
                 "timeout": "500ms"
             },
