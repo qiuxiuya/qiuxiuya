@@ -81,11 +81,9 @@
         "rules": [
             {
                 "action": "sniff",
-                "sniffer": [
-                    "http",
-                    "tls",
-                    "quic",
-                    "dns"
+                "inbound": [
+                    "tun",
+                    "mixed"
                 ],
                 "timeout": "500ms"
             },
@@ -181,11 +179,7 @@
         },
         {
             "tag": "direct",
-            "type": "direct",
-            "domain_resolver": {
-                "server": "local",
-                "strategy": "prefer_ipv4"
-            }
+            "type": "direct"
         }
     ],
     "inbounds": [
