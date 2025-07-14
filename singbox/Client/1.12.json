@@ -45,9 +45,41 @@
                 "action": "reject"
             },
             {
-                "query_type": [
-                    "A",
-                    "AAAA"
+                "type": "logical",
+                "mode": "and",
+                "rules": [
+                    {
+                        "query_type": [
+                            "A",
+                            "AAAA"
+                        ]
+                    },
+                    {
+                        "domain_suffix": [
+                            "msftconnecttest.com",
+                            "msftncsi.com",
+                            "icloud.com",
+                            "apple.com",
+                            "windowsupdate.com",
+                            "alipay.com",
+                            "taobao.com",
+                            "jd.com",
+                            "googleapis.com",
+                            "gstatic.com",
+                            "android.com",
+                            "dns.google",
+                            "detectportal.firefox.com",
+                            "localhost",
+                            "market.miaomi.com",
+                            "msftncsi.com",
+                            "msftconnecttest.com",
+                            "wotgame.com",
+                            "wggames.cn",
+                            "wargaming.net",
+                            "steamcontent.com"
+                        ],
+                        "invert": true
+                    }
                 ],
                 "action": "route",
                 "server": "fakeip",
@@ -195,6 +227,7 @@
             ],
             "stack": "mixed",
             "auto_route": true,
+            "strict_route": true,
             "platform": {
                 "http_proxy": {
                     "enabled": true,
