@@ -95,6 +95,7 @@
         ],
         "final": "google",
         "strategy": "prefer_ipv4",
+        "client_subnet":"114.114.114.114",
         "independent_cache": true
     },
     "route": {
