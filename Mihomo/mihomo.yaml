@@ -1,0 +1,91 @@
+proxy-providers:
+    provider1:
+        type: http
+        url: "https://back.39o.top/qiuxiuya/download/VPS?target=ClashMeta"
+        path: ./proxy_providers/provider1.yaml
+    provider2:
+        type: http
+        url: "http://example2.com"
+        path: ./proxy_providers/provider2.yaml
+    #provider3
+    #provider4......
+
+mixed-port: 2080
+ipv6: true
+allow-lan: true
+unified-delay: false
+tcp-concurrent: true
+external-controller: 127.0.0.1:9090
+log-level: info
+
+sniffer:
+    enable: true
+    force-dns-mapping: true
+    parse-pure-ip: true
+    override-destination: false
+    sniff:
+        HTTP:
+            ports: [80, 8080-8880]
+            override-destination: true
+        TLS:
+            ports: [443, 8443]
+        QUIC:
+            ports: [443, 8443]
+
+geodata-mode: false
+geox-url:
+    geoip: "https://github.com/qiuxiuya/Rules/raw/refs/heads/geoip/Country.mmdb"
+    geosite: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.db"
+
+profile:
+    store-selected: true
+    store-fake-ip: true
+
+tun:
+    enable: true
+    stack: mixed
+    dns-hijack: [any:53]
+    auto-detect-interface: true
+    auto-route: true
+
+dns:
+    enable: true
+    prefer-h3: true
+    ipv6: true
+    enhanced-mode: fake-ip
+    listen: :1053
+    fake-ip-range: 198.18.0.0/15
+    fake-ip-filter:
+        - "*"
+        - "+.lan"
+        - "+.local"
+        - "+.market.xiaomi.com"
+        - "+.direct"
+        - "+.msftconnecttest.com"
+        - "+.msftncsi.com"
+    default-nameserver:
+        - 114.114.114.114
+    nameserver:
+        - tls://223.5.5.5
+
+proxy-groups:
+    - name: "Proxy"
+      type: select
+      url: "https://www.gstatic.com/generate_204"
+      include-all: true
+
+rule-providers:
+    AD:
+        type: http
+        behavior: classical
+        path: ./AD.yaml
+        url: "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblockmihomo.yaml"
+
+rules:
+    - RULE-SET,AD,REJECT
+    - GEOSITE,google,Proxy
+    - GEOSITE,!CN,Proxy
+    - GEOSITE,CN,DIRECT
+    - GEOIP,private,DIRECT
+    - GEOIP,CN,DIRECT
+    - MATCH,Proxy
