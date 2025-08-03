@@ -19,11 +19,11 @@ for %%F in ("%video_dir%\*") do (
         set "subtitle_file=%subs_dir%\!base_name!.%subs_ext%"
 
         if exist "!subtitle_file!" (
-            call :NormalizePath "%%F" video_path_norm
-            call :NormalizeSubtitlePath "!subtitle_file!" subtitle_path_norm
-            call :NormalizePath "%out_dir%\!base_name!.mp4" out_file_norm
+            call :NormalizePath "%%F" video
+            call :NormalizeSubtitlePath "!subtitle_file!" subtitle
+            call :NormalizePath "%out_dir%\!base_name!.mp4" output
 
-            ffmpeg.exe -i "!video_path_norm!" -vf subtitles="!subtitle_path_norm!" -c:v h264_nvenc -crf 18 -c:a copy "!out_file_norm!"
+            ffmpeg.exe -i "!video!" -vf subtitles="!subtitle!" -c:v h264_nvenc -crf 18 -c:a copy "!output!"
         ) else (
             echo 字幕 !subtitle_file! 不存在
         )
