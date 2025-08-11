@@ -81,20 +81,9 @@
                 "rewrite_ttl": 1
             },
             {
-                "rule_set": "geosite-!cn",
-                "action": "route",
-                "server": "google"
-            },
-            {
                 "rule_set": "geosite-cn",
                 "action": "route",
                 "server": "local"
-            },
-            {
-                "action": "route",
-                "server": "udp",
-                "rewrite_ttl": 5,
-                "disable_cache": true
             }
         ],
         "final": "google",
@@ -109,8 +98,10 @@
             {
                 "action": "sniff",
                 "inbound": [
-                    "tun",
-                    "mixed"
+                    "http",
+                    "tls",
+                    "quic",
+                    "dns"
                 ],
                 "timeout": "500ms"
             },
@@ -126,6 +117,9 @@
                     }
                 ],
                 "action": "hijack-dns"
+            },
+            {
+                "action": "resolve"
             },
             {
                 "ip_is_private": true,
