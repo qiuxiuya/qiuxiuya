@@ -5,10 +5,10 @@ chat_ID="Telegram Chat ID[带有-的]"
 URL="https://api.telegram.org/bot${TOKEN}"
 
 url="http://127.0.0.1:5244"
-username="qiuxiuya"
-password="ds8892527"
-pathform="/local"
-pathto="/ACG"
+username="alist账号"
+password="alist密码"
+pathform="/来源目录"
+pathto="/终点目录"
 
 urlencode() {
     local raw="$1"
