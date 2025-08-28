@@ -7,8 +7,8 @@ URL="https://api.telegram.org/bot${TOKEN}"
 url="http://127.0.0.1:5244"
 username="alist账号"
 password="alist密码"
-pathform="/来源目录"
-pathto="/终点目录"
+pathform="/来源路径"
+pathto="/终点路径" #路径均为openlist中的路径
 
 urlencode() {
     local raw="$1"
