@@ -72,7 +72,6 @@ rule-providers:
 rules:
     - RULE-SET,AD,REJECT
     - GEOSITE,google,GLOBAL
-    - GEOSITE,!CN,GLOBAL
     - GEOSITE,CN,DIRECT
     - GEOIP,private,DIRECT
     - GEOIP,CN,DIRECT

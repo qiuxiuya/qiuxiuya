@@ -84,7 +84,6 @@ rule-providers:
 rules:
     - RULE-SET,AD,REJECT
     - GEOSITE,google,Proxy
-    - GEOSITE,!CN,Proxy
     - GEOSITE,CN,DIRECT
     - GEOIP,private,DIRECT
     - GEOIP,CN,DIRECT
