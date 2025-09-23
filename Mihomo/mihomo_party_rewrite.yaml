@@ -51,8 +51,10 @@ dns:
         - "+.direct"
         - "+.msftconnecttest.com"
         - "+.msftncsi.com"
+    proxy-server-nameserver:
+        - 223.5.5.5
     default-nameserver:
-        - 114.114.114.114
+        - 223.5.5.5
     nameserver:
         - tls://223.5.5.5
 
