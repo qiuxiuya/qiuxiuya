@@ -13,6 +13,11 @@
                 "detour": "Global"
             },
             {
+                "tag": "udp",
+                "type": "udp",
+                "server": "223.5.5.5"
+            },
+            {
                 "tag": "local",
                 "type": "tls",
                 "server": "223.5.5.5"
@@ -92,7 +97,7 @@
     },
     "route": {
         "default_domain_resolver": {
-            "server": "local"
+            "server": "udp"
         },
         "rules": [
             {
