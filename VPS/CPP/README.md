@@ -16,3 +16,16 @@ gdb --version
 
 即可完成
 
+如何解决中文路径问题:
+打开MSYS2 终端，运行
+
+```
+pacman -Syu
+pacman -S mingw-w64-ucrt-x86_64-gcc
+```
+
+打开windows设置，
+
+时间和语言>语言和区域>管理语言设置>更改系统区域设置
+
+勾选Beta版：使用Unicode UTF-8提供全球语言支持
