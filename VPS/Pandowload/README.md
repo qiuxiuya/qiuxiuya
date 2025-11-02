@@ -1,6 +1,6 @@
 ## 网盘直链下载助手
 
-### ->[点击安装](https://raw.githubusercontent.com/qiuxiuya/qiuxiuya/refs/heads/main/VPS/Pandowload/pan.js)<-
+### ->[点击安装](https://www.tampermonkey.net/script_installation.php#url=https://raw.githubusercontent.com/qiuxiuya/qiuxiuya/refs/heads/main/VPS/Pandowload/pan.js)<-
 
 修改自 [网盘直链下载助手 | 油小猴](https://www.youxiaohou.com/install.html)
 
