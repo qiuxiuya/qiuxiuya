@@ -141,7 +141,8 @@
             },
             {
                 "rule_set": [
-                    "geosite-!cn"
+                    "geosite-!cn",
+                    "google"
                 ],
                 "action": "route",
                 "outbound": "Global"
@@ -182,6 +183,13 @@
                 "type": "remote",
                 "format": "binary",
                 "url": "https://raw.githubusercontent.com/qiuxiuya/Rules/refs/heads/geoip/geoip.srs",
+                "download_detour": "Global"
+            },
+            {
+                "tag": "google",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geosite/google.srs",
                 "download_detour": "Global"
             }
         ],
