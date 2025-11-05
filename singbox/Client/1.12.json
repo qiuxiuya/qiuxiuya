@@ -40,41 +40,9 @@
                 "action": "reject"
             },
             {
-                "type": "logical",
-                "mode": "and",
-                "rules": [
-                    {
-                        "query_type": [
-                            "A",
-                            "AAAA"
-                        ]
-                    },
-                    {
-                        "domain_suffix": [
-                            "msftconnecttest.com",
-                            "msftncsi.com",
-                            "icloud.com",
-                            "apple.com",
-                            "windowsupdate.com",
-                            "alipay.com",
-                            "taobao.com",
-                            "jd.com",
-                            "googleapis.com",
-                            "gstatic.com",
-                            "android.com",
-                            "dns.google",
-                            "detectportal.firefox.com",
-                            "localhost",
-                            "market.miaomi.com",
-                            "msftncsi.com",
-                            "msftconnecttest.com",
-                            "wotgame.com",
-                            "wggames.cn",
-                            "wargaming.net",
-                            "steamcontent.com"
-                        ],
-                        "invert": true
-                    }
+                "query_type": [
+                    "A",
+                    "AAAA"
                 ],
                 "action": "route",
                 "server": "fakeip",
@@ -95,6 +63,9 @@
             "server": "local"
         },
         "rules": [
+            {
+                "action": "resolve"
+            },
             {
                 "action": "sniff",
                 "inbound": [
@@ -141,7 +112,6 @@
             },
             {
                 "rule_set": [
-                    "geosite-!cn",
                     "google"
                 ],
                 "action": "route",
@@ -172,13 +142,6 @@
                 "download_detour": "Global"
             },
             {
-                "tag": "geosite-!cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geosite/geolocation-!cn.srs",
-                "download_detour": "Global"
-            },
-            {
                 "tag": "geoip-cn",
                 "type": "remote",
                 "format": "binary",
@@ -205,11 +168,7 @@
         },
         {
             "tag": "direct",
-            "type": "direct",
-            "domain_resolver": {
-                "server": "local",
-                "strategy": "prefer_ipv4"
-            }
+            "type": "direct"
         }
     ],
     "inbounds": [
