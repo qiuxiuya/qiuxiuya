@@ -64,6 +64,10 @@
         },
         "rules": [
             {
+                "rule_set": [
+                    "unlock"
+                ],
+                "invert": true,
                 "action": "resolve"
             },
             {
@@ -132,6 +136,13 @@
                 "type": "remote",
                 "format": "binary",
                 "url": "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblocksingbox.srs",
+                "download_detour": "Global"
+            },
+            {
+                "tag": "unlock",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://raw.githubusercontent.com/qiuxiuya/Rules/refs/heads/rules/singbox/unlock.srs",
                 "download_detour": "Global"
             },
             {
