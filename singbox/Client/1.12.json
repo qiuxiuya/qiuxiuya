@@ -68,7 +68,8 @@
                     "unlock"
                 ],
                 "invert": true,
-                "action": "resolve"
+                "action": "resolve",
+                "strategy": "prefer_ipv4"
             },
             {
                 "action": "sniff",
