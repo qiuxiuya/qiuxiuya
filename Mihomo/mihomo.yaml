@@ -17,7 +17,6 @@ unified-delay: false
 tcp-concurrent: true
 external-controller: 127.0.0.1:9090
 external-ui: ./dashboard/
-external-ui-name: zadashboard
 external-ui-url: "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip"
 log-level: info
 
