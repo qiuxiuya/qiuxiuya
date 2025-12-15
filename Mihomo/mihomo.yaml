@@ -66,7 +66,7 @@ dns:
         - "+.msftconnecttest.com"
         - "+.msftncsi.com"
     nameserver:
-        - tls://223.5.5.5
+        - "tls://223.5.5.5"
 
 proxy-groups:
     - name: "Proxy"
@@ -78,9 +78,9 @@ rule-providers:
     AD:
         type: http
         behavior: domain
-        format: yaml
-        path: ./AD.yaml
-        url: "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblockmihomo.yaml"
+        format: mrs
+        path: ./AD.mrs
+        url: "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblockmihomo.mrs"
 
 rules:
     - RULE-SET,AD,REJECT
