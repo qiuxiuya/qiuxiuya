@@ -16,6 +16,9 @@ allow-lan: true
 unified-delay: false
 tcp-concurrent: true
 external-controller: 127.0.0.1:9090
+external-ui: ./dashboard/
+external-ui-name: zadashboard
+external-ui-url: "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip"
 log-level: info
 
 sniffer:
@@ -35,7 +38,7 @@ sniffer:
 geodata-mode: false
 geox-url:
     geoip: "https://github.com/qiuxiuya/Rules/raw/refs/heads/geoip/Country.mmdb"
-    geosite: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.db"
+    geosite: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat"
 
 profile:
     store-selected: true
