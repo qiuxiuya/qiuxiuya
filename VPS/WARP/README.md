@@ -20,7 +20,7 @@ apt update
 安装WARP-cil
 
 ```
-apt update
+apt install cloudflare-warp -y
 ```
 
 创建WARP免费账户
