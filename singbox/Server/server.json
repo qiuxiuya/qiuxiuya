@@ -1,0 +1,205 @@
+{
+    "log": {
+        "disabled": true,
+        "level": "info",
+        "timestamp": true
+    },
+    "dns": {
+        "servers": [
+            {
+                "tag": "google",
+                "type": "udp",
+                "server": "8.8.8.8"
+            }
+        ],
+        "rules": [
+            {
+                "action": "route",
+                "server": "google"
+            }
+        ],
+        "final": "google",
+        "independent_cache": true
+    },
+    "inbounds": [
+        {
+            "type": "shadowsocks",
+            "tag": "ss",
+            "listen": "::",
+            "listen_port": 11451,
+            "method": "aes-128-gcm",
+            "password": "密码" //可使用 sing-box generate rand --base64 16 生成
+        },
+        {
+            "type": "shadowtls",
+            "tag": "shadowtls",
+            "listen": "::",
+            "listen_port": 8443,
+            "version": 3,
+            "users": [
+                {
+                    "password": "密码" //自由设置
+                }
+            ],
+            "handshake": {
+                "server": "www.icloud.com",
+                "server_port": 443
+            },
+            "strict_mode": true,
+            "detour": "ss2022"
+        },
+        {
+            "type": "shadowsocks",
+            "tag": "ss2022",
+            "listen": "::1", //如果需要直接使用ss2022，把此处改成::,并在下一行加上 "listen_port": 8443,[端口与下方udp的相同]
+            "network": "tcp",
+            "method": "2022-blake3-aes-128-gcm",
+            "password": "密码" //可使用 sing-box generate rand --base64 16 生成
+        },
+        {
+            "type": "shadowsocks",
+            "tag": "ss2022_u",
+            "listen": "::",
+            "listen_port": 8443,
+            "network": "udp",
+            "method": "2022-blake3-aes-128-gcm",
+            "password": "密码" //使用上方相同的密码
+        },
+        {
+            "type": "trojan",
+            "tag": "Trojan",
+            "listen": "::",
+            "listen_port": 11452,
+            "transport": {
+                "type": "ws",
+                "path": "/", //ws路径可自由设置
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            },
+            "users": [
+                {
+                    "password": "密码" //Trojan密码无要求
+                }
+            ],
+            "tls": {
+                "enabled": true,
+                "server_name": "bing.com",
+                "certificate_path": "/etc/sing-box/bing.crt",
+                "key_path": "/etc/sing-box/bing.key" //自签证书可用 openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout /etc/sing-box/bing.key -out /etc/sing-box/bing.crt -subj "/C=US/CN=www.bing.com" 生成
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "xtls_reality",
+            "listen": "::",
+            "listen_port": 443,
+            "users": [
+                {
+                    "uuid": "UUID", //可使用 sing-box generate uuid 生成
+                    "flow": "xtls-rprx-vision"
+                }
+            ],
+            "tls": {
+                "enabled": true,
+                "server_name": "www.icloud.com",
+                "reality": {
+                    "enabled": true,
+                    "handshake": {
+                        "server": "www.icloud.com",
+                        "server_port": 443
+                    },
+                    "private_key": "私钥", //可使用 sing-box generate reality-keypair 生成，在客户端使用的是公钥
+                    "short_id": [] //可使用 openssl rand -hex 8 生成或留空
+                }
+            }
+        },
+        {
+            "type": "anytls",
+            "tag": "anytls",
+            "listen": "::",
+            "listen_port": 443,
+            "users": [
+                {
+                    "password": "密码"
+                }
+            ],
+            "tls": {
+                "enabled": true,
+                "server_name": "bing.com",
+                "certificate_path": "/etc/sing-box/bing.crt",
+                "key_path": "/etc/sing-box/bing.key" //自签证书可用 openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout /etc/sing-box/bing.key -out /etc/sing-box/bing.crt -subj "/C=US/CN=www.bing.com" 生成
+            }
+        }
+    ],
+    "route": {
+        "default_domain_resolver": {
+            "server": "google"
+        },
+        "rules": [
+            {
+                "action": "sniff",
+                "sniffer": [
+                    "http",
+                    "tls",
+                    "quic",
+                    "dns"
+                ],
+                "timeout": "500ms"
+            },
+            {
+                "action": "resolve",
+                "strategy": "prefer_ipv4"
+            },
+            {
+                "domain_suffix": [
+                    "chatgpt.com",
+                    "openai.com",
+                    "gemini.google.com",
+                    "claude.com",
+                    "claude.ai",
+                    "sora.com"
+                ],
+                "outbound": "Unlock" //解锁规则 按需分流
+            },
+            {
+                "ip_cidr": [
+                    "95.161.76.100/31",
+                    "91.108.56.107/32"
+                ],
+                "action": "reject" //telegram转圈
+            },
+            {
+                "inbound": [
+                    "ss",
+                    "ss2022",
+                    "ss2022_u",
+                    "shadowtls",
+                    "Trojan",
+                    "xtls_reality"
+                ],
+                "outbound": "direct"
+            }
+        ],
+        "auto_detect_interface": false
+    },
+    "outbounds": [
+        {
+            "tag": "direct",
+            "type": "direct"
+        },
+        {
+            "type": "shadowsocks", //解锁用ss 按需分流
+            "tag": "Unlock",
+            "server": "114.5.1.4",
+            "server_port": 11451,
+            "method": "aes-128-gcm",
+            "password": "密码"
+        }
+    ],
+    "ntp": {
+        "enabled": true,
+        "server": "time.google.com",
+        "server_port": 123,
+        "interval": "1m"
+    }
+}
