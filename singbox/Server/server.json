@@ -175,7 +175,8 @@
                     "ss2022_u",
                     "shadowtls",
                     "Trojan",
-                    "xtls_reality"
+                    "xtls_reality",
+                    "anytls"
                 ],
                 "outbound": "direct"
             }
