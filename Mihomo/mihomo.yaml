@@ -66,6 +66,8 @@ dns:
     - "+.direct"
     - "+.msftconnecttest.com"
     - "+.msftncsi.com"
+  default-nameserver:
+    - system
   nameserver:
     - "tls://223.5.5.5"
 
