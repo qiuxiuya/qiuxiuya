@@ -1,6 +1,9 @@
 [network]
 use_udp = true
- 
+no_tcp = false
+tcp_keepalive = 0
+tcp_keepalive_probe = 0
+
 [[endpoints]]
 listen = "0.0.0.0:233"
 remote = "114.5.1.4:233"
