@@ -4,6 +4,8 @@ allow-lan: true
 unified-delay: false
 tcp-concurrent: true
 external-controller: 127.0.0.1:9090
+external-ui: ./dashboard/
+external-ui-url: "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip"
 log-level: info
 
 sniffer:
@@ -22,7 +24,7 @@ sniffer:
 
 geodata-mode: false
 geox-url:
-  geoip: "https://github.com/qiuxiuya/Rules/raw/refs/heads/geoip/Country.mmdb"
+  geoip: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.db"
   geosite: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat"
 
 profile:
@@ -55,7 +57,7 @@ dns:
     - "+.msftconnecttest.com"
     - "+.msftncsi.com"
   nameserver:
-    - "tls://223.5.5.5"
+    - "quic://223.5.5.5"
 
 proxy-groups:
   - name: "Proxy"
