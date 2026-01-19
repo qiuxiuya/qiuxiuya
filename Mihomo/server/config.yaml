@@ -1,0 +1,105 @@
+tcp-concurrent: true
+ipv6: true
+log-level: silent
+ntp:
+  enable: true
+  write-to-system: false
+  server: time.google.com
+  port: 123
+  interval: 5
+
+hosts:
+  "localhost": 127.0.0.1
+
+dns:
+  enable: true
+  ipv6: true
+  use-hosts: true
+  use-system-hosts: true
+  prefer-h3: true
+  enhanced-mode: redir-host
+  nameserver:
+    - "8.8.8.8#ecs=203.198.0.0/24&ecs-override=false" #请按自己需求调整ecs的值和开启状态
+
+listeners:
+  - name: "SS"
+    type: shadowsocks
+    port: 11451 #端口自己设置，注意端口冲突
+    listen: "::"
+    cipher: aes-128-gcm
+    password: 密码 #可使用 openssl rand -base64 16 生成
+    udp: true
+  - name: "ShoadowTLS"
+    type: shadowsocks
+    port: 8443 #端口自己设置，注意端口冲突
+    listen: "::"
+    cipher: 2022-blake3-aes-128-gcm
+    password: 密码 #可使用 openssl rand -base64 16 生成
+    udp: true
+    shadow-tls:
+      enable: true
+      version: 3
+      users:
+        - name: 1
+          password: 密码 #自由设置
+      handshake:
+        dest: "www.icloud.com:443" #伪装域名
+  - name: "Trojan"
+    type: trojan
+    port: 11451 #端口自己设置，注意端口冲突
+    listen: "::"
+    ws-path: "/114514" #ws路径 自由设置
+    certificate: ./server.crt # 公钥证书 PEM 格式，或者公钥证书的路径
+    private-key: ./server.key # 私钥证书对应的私钥 PEM 格式，或者私钥路径
+    udp: true
+    users:
+      - username: 用户名 #自由设置
+        password: 密码 #自由设置
+  - name: "vless"
+    type: vless
+    port: 8443 #端口自己设置，注意端口冲突
+    listen: "::"
+    users:
+      - username: 1
+        uuid: UUID # 可使用 mihomo generate uuid 生成
+        flow: xtls-rprx-vision
+    reality-config:
+    dest: www.icloud.com:443
+    private-key: 私钥 #可使用 mihomo generate reality-keypair 生成
+    short-id:
+      - 0123456789abcdef #可使用 openssl rand -hex 8 生成
+    server-names:
+      - www.icloud.com
+  - name: "AnyTLS"
+    type: anytls
+    port: 8443 #端口自己设置，注意端口冲突
+    listen: "::"
+    users:
+      username1: password1
+      username2: password2 #用户名: 密码 [注意:与密码间有一空格]
+    certificate: ./server.crt # 公钥证书 PEM 格式，或者公钥证书的路径
+    private-key: ./server.key # 私钥证书对应的私钥 PEM 格式，或者私钥路径
+
+proxies:
+  - name: "direct"
+    type: direct
+    udp: true
+    ip-version: ipv4-prefer
+  - name: "Unlock" #解锁用SS，自行配置
+    server: "114.5.1.4"
+    port: 11451
+    type: ss
+    cipher: aes-128-gcm
+    password: "密码"
+    udp: true
+    tfo: true
+    fast-open: true
+
+rules:
+  - DOMAIN-SUFFIX,chatgpt.com,Unlock
+  - DOMAIN-SUFFIX,openai.com,Unlock
+  - DOMAIN-SUFFIX,gemini.google.com,Unlock
+  - DOMAIN-SUFFIX,claude.com,Unlock
+  - DOMAIN-SUFFIX,claude.ai,Unlock
+  - DOMAIN-SUFFIX,sora.com,Unlock #若不配置解锁请删除保留最后一行
+  - MATCH,direct
