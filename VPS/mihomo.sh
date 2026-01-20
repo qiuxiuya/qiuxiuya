@@ -1,28 +1,29 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 ARCH=$(uname -m)
 case "$ARCH" in
-    x86_64) ARCH="amd64" ;;
-    aarch64) ARCH="arm64" ;;
-    armv7l) ARCH="armv7" ;;
+    x86_64) KEY="amd64" ;;
+    aarch64) KEY="arm64" ;;
+    armv7l) KEY="armv7" ;;
     *) exit 1 ;;
 esac
 
-BASE_URL="https://github.com/qiuxiuya/Backup/raw/main"
-FILE_NAME="mihomo-linux-$ARCH.gz"
-DOWNLOAD_URL="$BASE_URL/$FILE_NAME"
+FILE="mihomo-linux-$KEY.gz"
+RAW_BASE="https://raw.githubusercontent.com/qiuxiuya/Backup/main/mihomo"
+URL="$RAW_BASE/$FILE"
 
-TMP_DIR=$(mktemp -d)
+TMPDIR=$(mktemp -d)
 
-curl -sL -o "$TMP_DIR/$FILE_NAME" "$DOWNLOAD_URL"
-gunzip -c "$TMP_DIR/$FILE_NAME" > /usr/bin/mihomo
+curl -s -f -L "$URL" -o "$TMPDIR/$FILE"
+
+gunzip -c "$TMPDIR/$FILE" > /usr/bin/mihomo
 chmod +x /usr/bin/mihomo
 
 mkdir -p /etc/mihomo
 touch /etc/mihomo/config.yaml
 
-cat >/etc/systemd/system/mihomo.service <<EOF
+cat > /etc/systemd/system/mihomo.service <<'EOF'
 [Unit]
 Description=mihomo Daemon, Another Clash Kernel.
 Documentation=https://wiki.metacubex.one
@@ -45,4 +46,4 @@ EOF
 systemctl daemon-reload
 systemctl enable mihomo
 
-rm -rf "$TMP_DIR"
+rm -rf "$TMPDIR"
