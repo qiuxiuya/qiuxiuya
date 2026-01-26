@@ -13,9 +13,24 @@
                 "detour": "Global"
             },
             {
+                "type": "hosts",
+                "tag": "host",
+                "predefined": {
+                    "dot.pub": [
+                        "120.53.53.53",
+                        "1.12.12.21"
+                    ],
+                    "doh.pub": [
+                        "120.53.53.53",
+                        "1.12.12.21"
+                    ]
+                }
+            },
+            {
                 "tag": "local",
                 "type": "tls",
-                "server": "223.5.5.5"
+                "server": "dot.pub",
+                "domain_resolver": "host"
             },
             {
                 "tag": "fakeip",
