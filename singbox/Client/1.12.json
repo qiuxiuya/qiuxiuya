@@ -80,11 +80,10 @@
         "rules": [
             {
                 "rule_set": [
-                    "unlock"
+                    "geosite-cn"
                 ],
-                "invert": true,
                 "action": "resolve",
-                "strategy": "prefer_ipv4"
+                "strategy": "ipv4_only"
             },
             {
                 "action": "sniff",
@@ -165,7 +164,7 @@
                 "tag": "geosite-cn",
                 "type": "remote",
                 "format": "binary",
-                "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geosite/cn.srs",
+                "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo/geosite/cn.srs",
                 "download_detour": "Global"
             },
             {
@@ -179,7 +178,7 @@
                 "tag": "google",
                 "type": "remote",
                 "format": "binary",
-                "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/sing/geo/geosite/google.srs",
+                "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo/geosite/google.srs",
                 "download_detour": "Global"
             }
         ],
