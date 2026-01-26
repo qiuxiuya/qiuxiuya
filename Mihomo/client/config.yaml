@@ -34,8 +34,9 @@ sniffer:
 
 geodata-mode: false
 geox-url:
-  geoip: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.db"
-  geosite: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat"
+  geoip: "https://ghproxy.cn/https://github.com/Mikuu3930/meta-rules-dat/releases/download/latest/geoip.dat"
+  geosite: "https://ghproxy.cn/https://github.com/Mikuu3930/meta-rules-dat/releases/download/latest/geosite.dat"
+  mmdb: "https://ghproxy.cn/https://github.com/Mikuu3930/meta-rules-dat/releases/download/latest/country.mmdb"
 
 profile:
   store-selected: true
@@ -49,10 +50,16 @@ tun:
   auto-route: true
   device: tun0
 
+hosts:
+  dot.pub: [120.53.53.53, 1.12.12.21]
+  doh.pub: [120.53.53.53, 1.12.12.21]
+
 dns:
   enable: true
   prefer-h3: true
   ipv6: true
+  use-hosts: true
+  use-system-hosts: true
   enhanced-mode: fake-ip
   listen: :1053
   fake-ip-range: 198.18.0.0/15
@@ -67,7 +74,7 @@ dns:
     - "+.msftconnecttest.com"
     - "+.msftncsi.com"
   nameserver:
-    - "quic://223.5.5.5"
+    - "https://doh.pub/dns-query"
 
 proxy-groups:
   - name: "Proxy"

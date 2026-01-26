@@ -1,12 +1,27 @@
 tcp-concurrent: true
 ipv6: true
 log-level: silent
+
 ntp:
   enable: true
   write-to-system: false
   server: time.google.com
   port: 123
   interval: 5
+
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  parse-pure-ip: true
+  override-destination: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
 
 hosts:
   "localhost": 127.0.0.1
@@ -102,4 +117,7 @@ rules:
   - DOMAIN-SUFFIX,claude.com,Unlock
   - DOMAIN-SUFFIX,claude.ai,Unlock
   - DOMAIN-SUFFIX,sora.com,Unlock #若不配置解锁请删除保留最后一行
+  - IP-CIDR,95.161.76.100/31,REJECT-DROP
+  - IP-CIDR,91.108.56.107/32,REJECT-DROP
+  - AND,((DST-PORT,443),(NETWORK,UDP)),REJECT-DROP
   - MATCH,direct
