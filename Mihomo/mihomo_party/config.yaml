@@ -45,7 +45,7 @@ hosts:
 
 dns:
   enable: true
-  prefer-h3: true
+  prefer-h3: false
   ipv6: true
   use-hosts: true
   use-system-hosts: true
