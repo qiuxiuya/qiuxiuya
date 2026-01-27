@@ -32,7 +32,6 @@ sniffer:
     QUIC:
       ports: [443, 8443]
 
-geodata-mode: false
 geox-url:
   geoip: "https://ghproxy.cn/https://github.com/Mikuu3930/meta-rules-dat/releases/download/latest/geoip.dat"
   geosite: "https://ghproxy.cn/https://github.com/Mikuu3930/meta-rules-dat/releases/download/latest/geosite.dat"
