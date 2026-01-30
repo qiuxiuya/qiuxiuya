@@ -195,7 +195,7 @@
             }
         },
         {
-            "tag": "v6",
+            "tag": "v6", //v4 v6分流，请注意将规则写在"action": "resolve"之前
             "type": "direct",
             "domain_resolver": {
                 "server": "google",
