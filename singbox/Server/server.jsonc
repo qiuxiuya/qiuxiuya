@@ -147,9 +147,6 @@
                 "timeout": "500ms"
             },
             {
-                "action": "resolve"
-            },
-            {
                 "domain_suffix": [
                     "chatgpt.com",
                     "openai.com",
@@ -159,16 +156,6 @@
                     "sora.com"
                 ],
                 "outbound": "Unlock" //解锁规则 按需分流
-            },
-            {
-                "action": "resolve"
-            },
-            {
-                "ip_cidr": [
-                    "95.161.76.100/31",
-                    "91.108.56.107/32"
-                ],
-                "action": "reject" //telegram转圈
             },
             {
                 "inbound": [
@@ -181,6 +168,16 @@
                     "anytls"
                 ],
                 "outbound": "v4"
+            },
+            {
+                "action": "resolve"
+            },
+            {
+                "ip_cidr": [
+                    "95.161.76.100/31",
+                    "91.108.56.107/32"
+                ],
+                "action": "reject" //telegram转圈
             }
         ],
         "auto_detect_interface": false
@@ -195,7 +192,7 @@
             }
         },
         {
-            "tag": "v6", //v4 v6分流，请注意将规则写在"action": "resolve"之前
+            "tag": "v6", //v4 v6分分流 请注意把规则写在"action": "resolve"之前
             "type": "direct",
             "domain_resolver": {
                 "server": "google",
