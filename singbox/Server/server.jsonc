@@ -169,9 +169,20 @@
                     "91.108.56.107/32"
                 ],
                 "action": "reject" //telegram转圈
+            },
+            {
+                "inbound": [
+                    "ss",
+                    "ss2022",
+                    "ss2022_u",
+                    "shadowtls",
+                    "Trojan",
+                    "xtls_reality",
+                    "anytls"
+                ],
+                "outbound": "v4"
             }
         ],
-        "final": "v4",
         "auto_detect_interface": false
     },
     "outbounds": [
