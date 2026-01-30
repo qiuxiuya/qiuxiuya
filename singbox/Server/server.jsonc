@@ -147,8 +147,7 @@
                 "timeout": "500ms"
             },
             {
-                "action": "resolve",
-                "strategy": "prefer_ipv4"
+                "action": "resolve"
             },
             {
                 "domain_suffix": [
@@ -162,31 +161,35 @@
                 "outbound": "Unlock" //解锁规则 按需分流
             },
             {
+                "action": "resolve"
+            },
+            {
                 "ip_cidr": [
                     "95.161.76.100/31",
                     "91.108.56.107/32"
                 ],
                 "action": "reject" //telegram转圈
-            },
-            {
-                "inbound": [
-                    "ss",
-                    "ss2022",
-                    "ss2022_u",
-                    "shadowtls",
-                    "Trojan",
-                    "xtls_reality",
-                    "anytls"
-                ],
-                "outbound": "direct"
             }
         ],
+        "final": "v4",
         "auto_detect_interface": false
     },
     "outbounds": [
         {
-            "tag": "direct",
-            "type": "direct"
+            "tag": "v4",
+            "type": "direct",
+            "domain_resolver": {
+                "server": "google",
+                "strategy": "prefer_ipv4"
+            }
+        },
+        {
+            "tag": "v6",
+            "type": "direct",
+            "domain_resolver": {
+                "server": "google",
+                "strategy": "ipv6_only"
+            }
         },
         {
             "type": "shadowsocks", //解锁用ss 按需分流
