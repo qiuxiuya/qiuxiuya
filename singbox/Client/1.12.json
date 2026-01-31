@@ -79,13 +79,6 @@
         },
         "rules": [
             {
-                "rule_set": [
-                    "geosite-cn"
-                ],
-                "action": "resolve",
-                "strategy": "ipv4_only"
-            },
-            {
                 "action": "sniff",
                 "inbound": [
                     "http",
@@ -107,6 +100,13 @@
                     }
                 ],
                 "action": "hijack-dns"
+            },
+            {
+                "rule_set": [
+                    "unlock"
+                ],
+                "invert": true,
+                "action": "resolve"
             },
             {
                 "ip_is_private": true,
@@ -172,6 +172,13 @@
                 "type": "remote",
                 "format": "binary",
                 "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo/geosite/google.srs",
+                "download_detour": "Global"
+            },
+            {
+                "tag": "unlock",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://raw.githubusercontent.com/qiuxiuya/Rules/refs/heads/rules/singbox/unlock.srs",
                 "download_detour": "Global"
             }
         ],
