@@ -76,7 +76,7 @@
     {
       "type": "selector",
       "tag": "Global",
-      "outbounds": null,
+      "outbounds": [],
       "interrupt_exist_connections": true
     },
     {
