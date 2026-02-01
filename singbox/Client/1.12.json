@@ -1,229 +1,205 @@
 {
-    "log": {
-        "disabled": false,
-        "level": "info",
-        "timestamp": true
-    },
-    "dns": {
-        "servers": [
-            {
-                "tag": "google",
-                "type": "tls",
-                "server": "8.8.8.8",
-                "detour": "Global"
-            },
-            {
-                "type": "hosts",
-                "tag": "host",
-                "predefined": {
-                    "dot.pub": [
-                        "120.53.53.53",
-                        "1.12.12.21"
-                    ],
-                    "doh.pub": [
-                        "120.53.53.53",
-                        "1.12.12.21"
-                    ]
-                }
-            },
-            {
-                "tag": "local",
-                "type": "tls",
-                "server": "dot.pub",
-                "domain_resolver": "host"
-            },
-            {
-                "tag": "fakeip",
-                "type": "fakeip",
-                "inet4_range": "198.18.0.0/15",
-                "inet6_range": "fc00::/18"
-            }
-        ],
-        "rules": [
-            {
-                "clash_mode": "Direct",
-                "action": "route",
-                "server": "local"
-            },
-            {
-                "clash_mode": "Global",
-                "action": "route",
-                "server": "fakeip"
-            },
-            {
-                "query_type": "HTTPS",
-                "action": "reject"
-            },
-            {
-                "query_type": [
-                    "A",
-                    "AAAA"
-                ],
-                "action": "route",
-                "server": "fakeip",
-                "rewrite_ttl": 1
-            },
-            {
-                "rule_set": "geosite-cn",
-                "action": "route",
-                "server": "local"
-            }
-        ],
-        "final": "google",
-        "strategy": "prefer_ipv4",
-        "independent_cache": true
-    },
-    "route": {
-        "default_domain_resolver": {
-            "server": "local"
-        },
-        "rules": [
-            {
-                "action": "sniff",
-                "inbound": [
-                    "http",
-                    "tls",
-                    "quic",
-                    "dns"
-                ],
-                "timeout": "500ms"
-            },
-            {
-                "type": "logical",
-                "mode": "or",
-                "rules": [
-                    {
-                        "port": 53
-                    },
-                    {
-                        "protocol": "dns"
-                    }
-                ],
-                "action": "hijack-dns"
-            },
-            {
-                "rule_set": [
-                    "unlock"
-                ],
-                "invert": true,
-                "action": "resolve"
-            },
-            {
-                "ip_is_private": true,
-                "action": "route",
-                "outbound": "direct"
-            },
-            {
-                "clash_mode": "Global",
-                "action": "route",
-                "outbound": "Global"
-            },
-            {
-                "clash_mode": "Direct",
-                "action": "route",
-                "outbound": "direct"
-            },
-            {
-                "rule_set": [
-                    "ad"
-                ],
-                "action": "reject"
-            },
-            {
-                "rule_set": [
-                    "google"
-                ],
-                "action": "route",
-                "outbound": "Global"
-            },
-            {
-                "rule_set": [
-                    "geoip-cn",
-                    "geosite-cn"
-                ],
-                "action": "route",
-                "outbound": "direct"
-            }
-        ],
-        "rule_set": [
-            {
-                "tag": "ad",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblocksingbox.srs",
-                "download_detour": "Global"
-            },
-            {
-                "tag": "geosite-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo/geosite/cn.srs",
-                "download_detour": "Global"
-            },
-            {
-                "tag": "geoip-cn",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://raw.githubusercontent.com/qiuxiuya/Rules/refs/heads/geoip/geoip.srs",
-                "download_detour": "Global"
-            },
-            {
-                "tag": "google",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo/geosite/google.srs",
-                "download_detour": "Global"
-            },
-            {
-                "tag": "unlock",
-                "type": "remote",
-                "format": "binary",
-                "url": "https://raw.githubusercontent.com/qiuxiuya/Rules/refs/heads/rules/singbox/unlock.srs",
-                "download_detour": "Global"
-            }
-        ],
-        "final": "Global",
-        "auto_detect_interface": true
-    },
-    "outbounds": [
-        {
-            "tag": "Global",
-            "type": "selector",
-            "interrupt_exist_connections": true,
-            "outbounds": []
-        },
-        {
-            "tag": "direct",
-            "type": "direct"
+  "log": {
+    "level": "info",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "type": "tls",
+        "tag": "google",
+        "detour": "Global",
+        "server": "8.8.8.8"
+      },
+      {
+        "type": "hosts",
+        "tag": "host",
+        "predefined": {
+          "dot.pub": [
+            "120.53.53.53",
+            "1.12.12.21"
+          ],
+          "doh.pub": [
+            "120.53.53.53",
+            "1.12.12.21"
+          ]
         }
+      },
+      {
+        "type": "tls",
+        "tag": "local",
+        "domain_resolver": "host",
+        "server": "dot.pub"
+      },
+      {
+        "type": "fakeip",
+        "tag": "fakeip",
+        "inet4_range": "198.18.0.0/15",
+        "inet6_range": "fc00::/18"
+      }
     ],
-    "inbounds": [
-        {
-            "type": "mixed",
-            "listen": "127.0.0.1",
-            "listen_port": 2080,
-            "set_system_proxy": false
-        },
-        {
-            "type": "tun",
-            "address": [
-                "172.18.0.1/30",
-                "fdfe:dcba:9876::1/126"
-            ],
-            "stack": "mixed",
-            "auto_route": true
-        }
+    "rules": [
+      {
+        "clash_mode": "Direct",
+        "server": "local"
+      },
+      {
+        "clash_mode": "Global",
+        "server": "fakeip"
+      },
+      {
+        "query_type": "HTTPS",
+        "action": "reject"
+      },
+      {
+        "query_type": [
+          "A",
+          "AAAA"
+        ],
+        "server": "fakeip",
+        "rewrite_ttl": 1
+      },
+      {
+        "rule_set": "geosite-cn",
+        "server": "local"
+      }
     ],
-    "experimental": {
-        "clash_api": {
-            "external_controller": "127.0.0.1:9090",
-            "external_ui": "dashboard",
-            "external_ui_download_url": "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip",
-            "external_ui_download_detour": "Global"
-        },
-        "cache_file": {
-            "enabled": true,
-            "store_fakeip": true
-        }
+    "final": "google",
+    "strategy": "prefer_ipv4",
+    "independent_cache": true
+  },
+  "inbounds": [
+    {
+      "type": "mixed",
+      "listen": "127.0.0.1",
+      "listen_port": 2080
+    },
+    {
+      "type": "tun",
+      "address": [
+        "172.18.0.1/30",
+        "fdfe:dcba:9876::1/126"
+      ],
+      "auto_route": true,
+      "stack": "mixed"
     }
+  ],
+  "outbounds": [
+    {
+      "type": "selector",
+      "tag": "Global",
+      "outbounds": null,
+      "interrupt_exist_connections": true
+    },
+    {
+      "type": "direct",
+      "tag": "direct"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "inbound": [
+          "http",
+          "tls",
+          "quic",
+          "dns"
+        ],
+        "action": "sniff",
+        "timeout": "500ms"
+      },
+      {
+        "type": "logical",
+        "mode": "or",
+        "rules": [
+          {
+            "port": 53
+          },
+          {
+            "protocol": "dns"
+          }
+        ],
+        "action": "hijack-dns"
+      },
+      {
+        "rule_set": "unlock",
+        "invert": true,
+        "action": "resolve"
+      },
+      {
+        "ip_is_private": true,
+        "outbound": "direct"
+      },
+      {
+        "clash_mode": "Global",
+        "outbound": "Global"
+      },
+      {
+        "clash_mode": "Direct",
+        "outbound": "direct"
+      },
+      {
+        "rule_set": "ad",
+        "action": "reject"
+      },
+      {
+        "rule_set": "google",
+        "outbound": "Global"
+      },
+      {
+        "rule_set": [
+          "geoip-cn",
+          "geosite-cn"
+        ],
+        "outbound": "direct"
+      }
+    ],
+    "rule_set": [
+      {
+        "type": "remote",
+        "tag": "ad",
+        "url": "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblocksingbox.srs",
+        "download_detour": "Global"
+      },
+      {
+        "type": "remote",
+        "tag": "geosite-cn",
+        "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo/geosite/cn.srs",
+        "download_detour": "Global"
+      },
+      {
+        "type": "remote",
+        "tag": "geoip-cn",
+        "url": "https://raw.githubusercontent.com/qiuxiuya/Rules/refs/heads/geoip/geoip.srs",
+        "download_detour": "Global"
+      },
+      {
+        "type": "remote",
+        "tag": "google",
+        "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo/geosite/google.srs",
+        "download_detour": "Global"
+      },
+      {
+        "type": "remote",
+        "tag": "unlock",
+        "url": "https://raw.githubusercontent.com/qiuxiuya/Rules/refs/heads/rules/singbox/unlock.srs",
+        "download_detour": "Global"
+      }
+    ],
+    "final": "Global",
+    "auto_detect_interface": true,
+    "default_domain_resolver": "local"
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true,
+      "store_fakeip": true
+    },
+    "clash_api": {
+      "external_controller": "127.0.0.1:9090",
+      "external_ui": "dashboard",
+      "external_ui_download_url": "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip",
+      "external_ui_download_detour": "Global"
+    }
+  }
 }
