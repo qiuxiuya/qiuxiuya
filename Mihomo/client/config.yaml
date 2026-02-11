@@ -55,7 +55,7 @@ hosts:
 
 dns:
   enable: true
-  prefer-h3: true
+  prefer-h3: false
   ipv6: true
   use-hosts: true
   use-system-hosts: true
@@ -72,8 +72,10 @@ dns:
     - "+.direct"
     - "+.msftconnecttest.com"
     - "+.msftncsi.com"
+    - "geosite:connectivity-check"
+    - "geosite:private"
   nameserver:
-    - "https://doh.pub/dns-query"
+    - "tls://dot.pub"
 
 proxy-groups:
   - name: "Proxy"

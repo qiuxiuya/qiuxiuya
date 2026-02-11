@@ -62,8 +62,10 @@ dns:
     - "+.direct"
     - "+.msftconnecttest.com"
     - "+.msftncsi.com"
+    - "geosite:connectivity-check"
+    - "geosite:private"
   nameserver:
-    - "https://doh.pub/dns-query"
+    - "tls://dot.pub"
 
 proxy-groups:
   - name: "Proxy"
