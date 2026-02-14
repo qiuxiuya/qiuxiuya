@@ -26,7 +26,6 @@ sniffer:
   sniff:
     HTTP:
       ports: [80, 8080-8880]
-      override-destination: true
     TLS:
       ports: [443, 8443]
     QUIC:
@@ -43,11 +42,13 @@ profile:
 
 tun:
   enable: true
-  stack: mixed
-  dns-hijack: [any:53]
+  stack: gvisor
+  dns-hijack:
+    - any:53
+    - tcp://any:53
   auto-detect-interface: true
   auto-route: true
-  device: tun0
+  device: mihomo
 
 hosts:
   dot.pub: [120.53.53.53, 1.12.12.21]

@@ -63,8 +63,9 @@
         "172.19.0.0/30",
         "fdfe:dcba:9876::/126"
       ],
+      "interface_name": "sing-box",
       "auto_route": true,
-      "stack": "mixed"
+      "stack": "gvisor"
     },
     {
       "type": "mixed",
