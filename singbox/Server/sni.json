@@ -125,6 +125,7 @@
         ],
         "timeout": "500ms"
       },
+      //sni配置: ShadowTLS和reality为伪装域名;Torjan可以是入站域名或者ws-headers中Host的域名或者inbounds.tls.server_name;AnyTLS为inbounds.tls.server_name
       {
         "inbound": "sni",
         "domain": "shadowtls伪装域名",
