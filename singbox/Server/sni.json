@@ -1,0 +1,181 @@
+{
+  "log": {
+    "disabled": false,
+    "level": "info",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "type": "udp",
+        "tag": "google",
+        "server": "8.8.8.8"
+      }
+    ],
+    "final": "google"
+  },
+  "ntp": {
+    "enabled": true,
+    "server": "time.google.com",
+    "server_port": 123,
+    "interval": "30m"
+  },
+  "inbounds": [
+    {
+      "type": "direct",
+      "tag": "sni",
+      "listen": "::",
+      "listen_port": 8443,
+      "network": "tcp"
+    },
+    {
+      "type": "shadowtls",
+      "tag": "shadowtls",
+      "listen": "::1",
+      "listen_port": 11450,
+      "detour": "ss2022",
+      "version": 3,
+      "users": [
+        {
+          "password": "shadowtls密码"
+        }
+      ],
+      "handshake": {
+        "server": "www.icloud.com",
+        "server_port": 443
+      },
+      "strict_mode": true
+    },
+    {
+      "type": "shadowsocks",
+      "tag": "ss2022",
+      "listen": "::1",
+      "method": "2022-blake3-aes-128-gcm",
+      "password": "ss密码",
+      "multiplex": {
+        "enabled": true,
+        "padding": true
+      }
+    },
+    {
+      "type": "shadowsocks",
+      "tag": "ss2022_u",
+      "listen": "::",
+      "listen_port": 8443,
+      "network": "udp",
+      "method": "2022-blake3-aes-128-gcm",
+      "password": "ss密码",
+      "multiplex": {
+        "enabled": true,
+        "padding": true
+      }
+    },
+    {
+      "type": "trojan",
+      "tag": "Trojan",
+      "listen": "::1",
+      "listen_port": 11451,
+      "users": [
+        {
+          "name": "",
+          "password": "Trojan密码"
+        }
+      ],
+      "tls": {
+        "enabled": true,
+        "server_name": "bing.com",
+        "certificate_path": "/etc/sing-box/bing.crt",
+        "key_path": "/etc/sing-box/bing.key"
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "max_early_data": 2048,
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "multiplex": {
+        "enabled": true,
+        "padding": true
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "direct",
+      "tag": "direct"
+    },
+    {
+      "type": "direct",
+      "tag": "v6",
+      "domain_resolver": {
+        "server": "google",
+        "strategy": "ipv6_only"
+      }
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "action": "sniff",
+        "sniffer": [
+          "http",
+          "tls",
+          "quic",
+          "dns"
+        ],
+        "timeout": "500ms"
+      },
+      {
+        "inbound": "sni",
+        "domain": "shadowtls伪装域名",
+        "action": "route-options",
+        "override_address": "::1",
+        "override_port": 11450
+      },
+      {
+        "inbound": "sni",
+        "domain": [
+          "sni1",
+          "sni2",
+          "sni可以是你连接该节点使用的域名或者是ws-headers中Host的域名"
+        ],
+        "action": "route-options",
+        "override_address": "::1",
+        "override_port": 11451
+      },
+      {
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          {
+            "protocol": "quic"
+          },
+          {
+            "port": 443
+          }
+        ],
+        "action": "reject",
+        "method": "drop"
+      },
+      {
+        "action": "resolve",
+        "strategy": "prefer_ipv4"
+      },
+      {
+        "ip_cidr": "0.0.0.0/0",
+        "invert": false,
+        "outbound": "direct"
+      },
+      {
+        "ip_cidr": "::/0",
+        "invert": false,
+        "outbound": "direct"
+      }
+    ],
+    "auto_detect_interface": false,
+    "default_domain_resolver": {
+      "server": "google",
+      "strategy": "prefer_ipv6"
+    }
+  }
+}
