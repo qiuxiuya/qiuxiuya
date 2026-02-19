@@ -137,8 +137,7 @@
         "inbound": "sni",
         "domain": [
           "sni1",
-          "sni2",
-          "sni可以是你连接该节点使用的域名或者是ws-headers中Host的域名"
+          "sni2"
         ],
         "action": "route-options",
         "override_address": "::1",
