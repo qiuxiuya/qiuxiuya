@@ -125,7 +125,7 @@
         ],
         "timeout": "500ms"
       },
-      //sni配置: ShadowTLS和reality为伪装域名;Trojan可以是ws-headers中Host的域名或者inbounds.tls.server_name;AnyTLS为inbounds.tls.server_name;如果跳过证书验证，则sni可以为与客户端sni相同的任意值
+      //sni配置: ShadowTLS和reality为伪装域名;Trojan和AnyTLS为inbounds.tls.server_name/如果跳过证书验证，则sni可以为与客户端sni相同的任意值
       {
         "inbound": "sni",
         "domain": "shadowtls伪装域名",
