@@ -1,12 +1,30 @@
+mrs-domain:
+  &mrs-domain { type: http, behavior: domain, format: mrs, interval: 86400 }
+mrs-ipcidr:
+  &mrs-ipcidr { type: http, behavior: ipcidr, format: mrs, interval: 86400 }
+text-domain:
+  &text-domain { type: http, behavior: domain, format: mrs, interval: 86400 }
+text-ipcidr: 
+  &text-ipcidr { type: http, interval: 86400 }
+p: 
+  &p {type: http, interval: 86400, health-check: {enable: true, url: http://cp.cloudflare.com/generate_204, interval: 1800, timeout: 5000, lazy: true }}
+
 proxy-providers:
   provider1:
-    type: http
+    <<: *p
     url: "http://example1.com"
     path: ./proxy_providers/provider1.yaml
   provider2:
-    type: http
+    <<: *p
     url: "http://example2.com"
     path: ./proxy_providers/provider2.yaml
+
+ntp:
+  enable: true
+  write-to-system: false
+  server: time.apple.com
+  port: 123
+  interval: 30
 
 mixed-port: 2080
 ipv6: true
@@ -14,7 +32,7 @@ allow-lan: true
 unified-delay: false
 tcp-concurrent: true
 external-controller: 127.0.0.1:9090
-external-ui: ./dashboard/
+external-ui: ./providers/dashboard/
 external-ui-url: "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip"
 log-level: info
 
@@ -26,15 +44,11 @@ sniffer:
   sniff:
     HTTP:
       ports: [80, 8080-8880]
+      override-destination: true
     TLS:
       ports: [443, 8443]
     QUIC:
       ports: [443, 8443]
-
-geox-url:
-  geoip: "https://ghproxy.cn/https://github.com/Mikuu3930/meta-rules-dat/releases/download/latest/geoip.dat"
-  geosite: "https://ghproxy.cn/https://github.com/Mikuu3930/meta-rules-dat/releases/download/latest/geosite.dat"
-  mmdb: "https://ghproxy.cn/https://github.com/Mikuu3930/meta-rules-dat/releases/download/latest/country.mmdb"
 
 profile:
   store-selected: true
@@ -42,7 +56,7 @@ profile:
 
 tun:
   enable: true
-  stack: gvisor
+  stack: mixed
   dns-hijack:
     - any:53
     - tcp://any:53
@@ -73,29 +87,50 @@ dns:
     - "+.direct"
     - "+.msftconnecttest.com"
     - "+.msftncsi.com"
-    - "geosite:connectivity-check"
-    - "geosite:private"
+    - "rule-set:geosite-connectivity-check"
+    - "rule-set:geosite-private"
   nameserver:
     - "tls://dot.pub"
 
 proxy-groups:
   - name: "Proxy"
     type: select
-    url: "https://www.gstatic.com/generate_204"
+    url: "http://cp.cloudflare.com/generate_204"
     include-all: true
 
 rule-providers:
   AD:
-    type: http
-    behavior: domain
-    format: mrs
-    path: ./AD.mrs
-    url: "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblockmihomo.mrs"
-
+    <<: *mrs-domain
+    path: ./providers/rules/AD.mrs
+    url: "https://github.com/qiuxiuya/adblockfilters/raw/refs/heads/main/rules/adblockmihomo.mrs"
+  geosite-google:
+    <<: *mrs-domain
+    path: ./providers/rules/geosite-google.mrs
+    url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo/geosite/google.mrs"
+  geosite-cn:
+    <<: *mrs-domain
+    path: ./providers/rules/geosite-cn.mrs
+    url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo/geosite/cn.mrs"
+  geosite-connectivity-check:
+    <<: *mrs-domain
+    path: ./providers/rules/geosite-connectivity-check.mrs
+    url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo/geosite/connectivity-check.mrs"
+  geosite-private:
+    <<: *mrs-domain
+    path: ./providers/rules/geosite-private.mrs
+    url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo/geosite/private.mrs"
+  geoip-private:
+    <<: *mrs-ipcidr
+    path: ./providers/rules/geoip-private.mrs
+    url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo/geoip/private.mrs"
+  geoip-cn:
+    <<: *mrs-ipcidr
+    path: ./providers/rules/geoip-cn.mrs
+    url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo/geoip/cn.mrs"
 rules:
-  - RULE-SET,AD,REJECT
-  - GEOSITE,google,Proxy
-  - GEOSITE,CN,DIRECT
-  - GEOIP,private,DIRECT
-  - GEOIP,CN,DIRECT
+  - RULE-SET,AD,REJECT-DROP
+  - RULE-SET,geosite-google,Proxy
+  - RULE-SET,geosite-cn,direct
+  - RULE-SET,geoip-private,direct
+  - RULE-SET,geoip-cn,direct
   - MATCH,Proxy
