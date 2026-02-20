@@ -3,9 +3,9 @@ mrs-domain:
 mrs-ipcidr:
   &mrs-ipcidr { type: http, behavior: ipcidr, format: mrs, interval: 86400 }
 text-domain:
-  &text-domain { type: http, behavior: domain, format: mrs, interval: 86400 }
+  &text-domain { type: http, behavior: domain, format: text, interval: 86400 }
 text-ipcidr: 
-  &text-ipcidr { type: http, interval: 86400 }
+  &text-ipcidr { type: http, behavior: domain, format: text, interval: 86400 }
 p: 
   &p {type: http, interval: 86400, health-check: {enable: true, url: http://cp.cloudflare.com/generate_204, interval: 1800, timeout: 5000, lazy: true }}
 
