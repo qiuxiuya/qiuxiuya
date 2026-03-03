@@ -4,10 +4,10 @@ mrs-ipcidr:
   &mrs-ipcidr { type: http, behavior: ipcidr, format: mrs, interval: 86400 }
 text-domain:
   &text-domain { type: http, behavior: domain, format: text, interval: 86400 }
-text-ipcidr: 
+text-ipcidr:
   &text-ipcidr { type: http, behavior: domain, format: text, interval: 86400 }
 p: 
-  &p {type: http, interval: 86400, health-check: {enable: true, url: http://cp.cloudflare.com/generate_204, interval: 1800, timeout: 5000, lazy: true }}
+  &p { type: http, interval: 86400, health-check: { enable: true, url: http://cp.cloudflare.com/generate_204, interval: 1800, timeout: 5000, lazy: true } }
 
 proxy-providers:
   provider1:
@@ -91,6 +91,10 @@ dns:
   nameserver:
     - "tls://dot.pub"
 
+proxies:
+  - { name: "dns", type: dns }
+  - { name: "direct", type: direct, udp: true, ip-version: ipv4-prefer }
+
 proxy-groups:
   - name: "Proxy"
     type: select
@@ -127,6 +131,7 @@ rule-providers:
     path: ./providers/rules/geoip-cn.mrs
     url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo/geoip/cn.mrs"
 rules:
+  - DST-PORT,53,dns
   - RULE-SET,AD,REJECT-DROP
   - RULE-SET,geosite-google,Proxy
   - RULE-SET,geosite-cn,direct
