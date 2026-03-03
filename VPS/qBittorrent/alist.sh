@@ -1,46 +1,68 @@
 #!/bin/bash
 
-TOKEN="Telegram BotToken"
-chat_ID="Telegram Chat ID[带有-的]"
+TOKEN="TGbot Token"
+chat_ID="用户ID"
 URL="https://api.telegram.org/bot${TOKEN}"
 
-url="http://127.0.0.1:5244"
-username="alist账号"
-password="alist密码"
-pathform="/来源路径"
-pathto="/终点路径" #路径均为openlist中的路径
+url="http://127.0.0.1:5244" #openlist地址
+username="username" #用户名
+password="passwd"  #密码
+pathform="/disk/bt"  #从openlist移动的起点目录
+pathto="/ACG/updating"  #从openlist移动的终点目录
+
+BLACKLIST_JSON='[
+  "BT",
+  "MKV"
+]'  #黑名单列表（通过读取分类）
 
 urlencode() {
     local raw="$1"
     echo -n "$raw" | jq -sRr @uri
 }
 
-while getopts "n:" opt; do
-  case ${opt} in
-    n)
-      name="$OPTARG"
+name=""
+filter=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -n)
+      name="$2"
+      shift 2
       ;;
-    \?)
-      echo "Usage: $0 -n name"
-      exit 1
+    -f)
+      if [[ -n "$2" && "$2" != -* ]]; then
+        filter="$2"
+        shift 2
+      else
+        filter=""
+        shift 1
+      fi
+      ;;
+    *)
+      shift
       ;;
   esac
 done
 
 if [ -z "$name" ]; then
-  echo "Filename is required"
   exit 1
 fi
 
-response=$(curl -X POST "$url/api/auth/login" \
+if [ -n "$filter" ]; then
+  if echo "$BLACKLIST_JSON" | jq -e --arg f "$filter" '
+      any(.[]; $f | contains(.))
+    ' > /dev/null; then
+    exit 0
+  fi
+fi
+
+response=$(curl -s -X POST "$url/api/auth/login" \
   -H "Content-Type: application/json" \
   -d "{\"username\": \"$username\", \"password\": \"$password\"}")
 
 token=$(echo "$response" | jq -r '.data.token')
 
-echo "Token: $token"
-
-response=$(curl --location --request POST "$url/api/fs/copy" \
+curl -s --location --request POST "$url/api/fs/copy" \
   --header "Authorization:$token" \
   --header "Content-Type: application/json" \
   --data-raw '{
@@ -49,9 +71,9 @@ response=$(curl --location --request POST "$url/api/fs/copy" \
     "names": [
         "'"$name"'"
     ]
-  }')
-
-echo "Response: $response"
+  }'
 
 ENCODED_NAME=$(urlencode "$name")
-curl -s -o /dev/null -X POST "${URL}/sendMessage" -d chat_id="${chat_ID}" -d text="$ENCODED_NAME"
+curl -s -o /dev/null -X POST "${URL}/sendMessage" \
+  -d chat_id="${chat_ID}" \
+  -d text="$ENCODED_NAME"
