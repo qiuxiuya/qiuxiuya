@@ -52,10 +52,11 @@
         "action": "reject"
       },
       {
-        "query_type": [
-          "A",
-          "AAAA"
+        "rule_set": [
+          "geosite-connectivity-check",
+          "geosite-private"
         ],
+        "invert": true,
         "server": "fakeip",
         "rewrite_ttl": 1
       },
@@ -184,6 +185,18 @@
         "type": "remote",
         "tag": "unlock",
         "url": "https://raw.githubusercontent.com/qiuxiuya/Rules/refs/heads/rules/singbox/unlock.srs",
+        "download_detour": "Global"
+      },
+      {
+        "type": "remote",
+        "tag": "geosite-connectivity-check",
+        "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo/geosite/connectivity-check.srs",
+        "download_detour": "Global"
+      },
+      {
+        "type": "remote",
+        "tag": "geosite-private",
+        "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo/geosite/private.srs",
         "download_detour": "Global"
       }
     ],

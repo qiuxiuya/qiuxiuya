@@ -6,7 +6,15 @@
   "providers": [
     {
       "type": "remote",
-      "tag": "provider",
+      "tag": "provider1",
+      "url": "",
+      "exclude": "",
+      "user_agent": "sing-box",
+      "download_detour": "direct"
+    },
+    {
+      "type": "remote",
+      "tag": "provider2",
       "url": "",
       "exclude": "",
       "user_agent": "sing-box",
@@ -56,10 +64,11 @@
         "action": "reject"
       },
       {
-        "query_type": [
-          "A",
-          "AAAA"
+        "rule_set": [
+          "geosite-connectivity-check",
+          "geosite-private"
         ],
+        "invert": true,
         "server": "fakeip",
         "rewrite_ttl": 1
       },
@@ -93,10 +102,9 @@
     {
       "type": "selector",
       "tag": "Global",
-      "providers": [
-        "provider"
-      ],
-      "interrupt_exist_connections": true
+      "use_all_providers": true,
+      "interrupt_exist_connections": true,
+      "exclude": "_shadowtls"
     },
     {
       "type": "direct",
@@ -188,6 +196,18 @@
         "type": "remote",
         "tag": "google",
         "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo/geosite/google.srs",
+        "download_detour": "Global"
+      },
+      {
+        "type": "remote",
+        "tag": "geosite-connectivity-check",
+        "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo/geosite/connectivity-check.srs",
+        "download_detour": "Global"
+      },
+      {
+        "type": "remote",
+        "tag": "geosite-private",
+        "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo/geosite/private.srs",
         "download_detour": "Global"
       }
     ],
