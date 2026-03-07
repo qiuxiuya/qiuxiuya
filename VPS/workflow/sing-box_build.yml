@@ -1,0 +1,477 @@
+name: Cross Platform Binaries
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version name, leave empty to auto calculate"
+        required: false
+        type: string
+        default: ""
+  push:
+    branches:
+      - stable
+      - testing
+      - unstable
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  calculate_version:
+    name: Calculate version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.outputs.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ~1.25.7
+
+      - name: Use input version
+        if: github.event_name == 'workflow_dispatch' && inputs.version != ''
+        run: |
+          echo "version=${{ inputs.version }}" >> "$GITHUB_ENV"
+
+      - name: Calculate version
+        if: github.event_name != 'workflow_dispatch' || inputs.version == ''
+        run: |
+          go run -v ./cmd/internal/read_tag --ci --nightly
+
+      - name: Set outputs
+        id: outputs
+        run: |
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  build_unix:
+    name: Build ${{ matrix.os }}/${{ matrix.arch }}${{ matrix.goarm && format('/v{0}', matrix.goarm) }}${{ matrix.go386 && format('/{0}', matrix.go386) }}${{ matrix.gomips && format('/{0}', matrix.gomips) }}${{ matrix.variant && format('/{0}', matrix.variant) }}
+    runs-on: ubuntu-latest
+    needs:
+      - calculate_version
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: linux, arch: amd64, variant: purego, naive: true }
+          - { os: linux, arch: amd64, variant: glibc, naive: true }
+          - { os: linux, arch: amd64, variant: musl, naive: true }
+
+          - { os: linux, arch: arm64, variant: purego, naive: true }
+          - { os: linux, arch: arm64, variant: glibc, naive: true }
+          - { os: linux, arch: arm64, variant: musl, naive: true }
+
+          - { os: linux, arch: "386", go386: sse2 }
+          - { os: linux, arch: "386", variant: glibc, naive: true, go386: sse2 }
+          - { os: linux, arch: "386", variant: musl, naive: true, go386: sse2 }
+
+          - { os: linux, arch: arm, goarm: "7" }
+          - { os: linux, arch: arm, variant: glibc, naive: true, goarm: "7" }
+          - { os: linux, arch: arm, variant: musl, naive: true, goarm: "7" }
+
+          - { os: linux, arch: mipsle, gomips: hardfloat, naive: true, variant: glibc }
+          - { os: linux, arch: mipsle, gomips: softfloat, naive: true, variant: musl }
+          - { os: linux, arch: mips64le, gomips: hardfloat, naive: true, variant: glibc }
+          - { os: linux, arch: riscv64, naive: true, variant: glibc }
+          - { os: linux, arch: riscv64, naive: true, variant: musl }
+          - { os: linux, arch: loong64, naive: true, variant: glibc }
+          - { os: linux, arch: loong64, naive: true, variant: musl }
+
+          - { os: linux, arch: "386", go386: softfloat }
+          - { os: linux, arch: arm, goarm: "5" }
+          - { os: linux, arch: arm, goarm: "6" }
+          - { os: linux, arch: mips, gomips: softfloat }
+          - { os: linux, arch: mipsle, gomips: hardfloat }
+          - { os: linux, arch: mipsle, gomips: softfloat }
+          - { os: linux, arch: mips64, gomips: softfloat }
+          - { os: linux, arch: mips64le, gomips: hardfloat }
+          - { os: linux, arch: mips64le, gomips: softfloat }
+          - { os: linux, arch: s390x }
+          - { os: linux, arch: ppc64le }
+          - { os: linux, arch: riscv64 }
+          - { os: linux, arch: loong64 }
+
+          - { os: android, arch: arm64, ndk: "aarch64-linux-android23" }
+          - { os: android, arch: arm, ndk: "armv7a-linux-androideabi23" }
+          - { os: android, arch: amd64, ndk: "x86_64-linux-android23" }
+          - { os: android, arch: "386", ndk: "i686-linux-android23" }
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ~1.25.7
+
+      - name: Setup Android NDK
+        if: matrix.os == 'android'
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r28
+          local-cache: true
+
+      - name: Clone cronet-go
+        if: matrix.naive
+        run: |
+          set -xeuo pipefail
+          CRONET_GO_VERSION=$(cat .github/CRONET_GO_VERSION)
+          git init ~/cronet-go
+          git -C ~/cronet-go remote add origin https://github.com/sagernet/cronet-go.git
+          git -C ~/cronet-go fetch --depth=1 origin "$CRONET_GO_VERSION"
+          git -C ~/cronet-go checkout FETCH_HEAD
+          git -C ~/cronet-go submodule update --init --recursive --depth=1
+
+      - name: Regenerate Debian keyring
+        if: matrix.naive
+        run: |
+          set -xeuo pipefail
+          rm -f ~/cronet-go/naiveproxy/src/build/linux/sysroot_scripts/keyring.gpg
+          cd ~/cronet-go
+          GPG_TTY=/dev/null ./naiveproxy/src/build/linux/sysroot_scripts/generate_keyring.sh
+
+      - name: Cache Chromium toolchain
+        if: matrix.naive
+        id: cache-chromium-toolchain
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/cronet-go/naiveproxy/src/third_party/llvm-build/
+            ~/cronet-go/naiveproxy/src/gn/out/
+            ~/cronet-go/naiveproxy/src/chrome/build/pgo_profiles/
+            ~/cronet-go/naiveproxy/src/out/sysroot-build/
+          key: chromium-toolchain-${{ matrix.arch }}-${{ matrix.variant }}-${{ hashFiles('.github/CRONET_GO_VERSION') }}
+
+      - name: Download Chromium toolchain
+        if: matrix.naive
+        run: |
+          set -xeuo pipefail
+          cd ~/cronet-go
+          if [[ "${{ matrix.variant }}" == "musl" ]]; then
+            go run ./cmd/build-naive --target=linux/${{ matrix.arch }} --libc=musl download-toolchain
+          else
+            go run ./cmd/build-naive --target=linux/${{ matrix.arch }} download-toolchain
+          fi
+
+      - name: Set Chromium toolchain environment
+        if: matrix.naive
+        run: |
+          set -xeuo pipefail
+          cd ~/cronet-go
+          if [[ "${{ matrix.variant }}" == "musl" ]]; then
+            go run ./cmd/build-naive --target=linux/${{ matrix.arch }} --libc=musl env >> "$GITHUB_ENV"
+          else
+            go run ./cmd/build-naive --target=linux/${{ matrix.arch }} env >> "$GITHUB_ENV"
+          fi
+
+      - name: Set build tags
+        run: |
+          set -xeuo pipefail
+          if [[ "${{ matrix.os }}" == "android" ]]; then
+            TAGS=$(cat release/DEFAULT_BUILD_TAGS_OTHERS)
+          elif [[ "${{ matrix.naive }}" == "true" ]]; then
+            TAGS=$(cat release/DEFAULT_BUILD_TAGS)
+          else
+            TAGS=$(cat release/DEFAULT_BUILD_TAGS_OTHERS)
+          fi
+
+          if [[ "${{ matrix.variant }}" == "purego" ]]; then
+            TAGS="${TAGS},with_purego"
+          elif [[ "${{ matrix.variant }}" == "musl" ]]; then
+            TAGS="${TAGS},with_musl"
+          fi
+
+          echo "BUILD_TAGS=${TAGS}" >> "$GITHUB_ENV"
+
+      - name: Set shared ldflags
+        run: |
+          echo "LDFLAGS_SHARED=$(cat release/LDFLAGS)" >> "$GITHUB_ENV"
+
+      - name: Build Linux purego
+        if: matrix.os == 'linux' && matrix.variant == 'purego'
+        run: |
+          set -xeuo pipefail
+          mkdir -p dist
+          go build -v -trimpath -o dist/sing-box -tags "${BUILD_TAGS}" \
+            -ldflags "-X 'github.com/sagernet/sing-box/constant.Version=${{ needs.calculate_version.outputs.version }}' ${LDFLAGS_SHARED} -s -w -buildid=" \
+            ./cmd/sing-box
+        env:
+          CGO_ENABLED: "0"
+          GOOS: linux
+          GOARCH: ${{ matrix.arch }}
+          GO386: ${{ matrix.go386 }}
+          GOARM: ${{ matrix.goarm }}
+          GOMIPS: ${{ matrix.gomips }}
+          GOMIPS64: ${{ matrix.gomips }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Linux libcronet.so
+        if: matrix.os == 'linux' && matrix.variant == 'purego' && matrix.naive
+        run: |
+          set -xeuo pipefail
+          cd ~/cronet-go
+          CGO_ENABLED=0 go run -v ./cmd/build-naive extract-lib --target linux/${{ matrix.arch }} -o "$GITHUB_WORKSPACE/dist"
+
+      - name: Build Linux glibc
+        if: matrix.os == 'linux' && matrix.variant == 'glibc'
+        run: |
+          set -xeuo pipefail
+          mkdir -p dist
+          go build -v -trimpath -o dist/sing-box -tags "${BUILD_TAGS}" \
+            -ldflags "-X 'github.com/sagernet/sing-box/constant.Version=${{ needs.calculate_version.outputs.version }}' ${LDFLAGS_SHARED} -s -w -buildid=" \
+            ./cmd/sing-box
+        env:
+          CGO_ENABLED: "1"
+          GOOS: linux
+          GOARCH: ${{ matrix.arch }}
+          GO386: ${{ matrix.go386 }}
+          GOARM: ${{ matrix.goarm }}
+          GOMIPS: ${{ matrix.gomips }}
+          GOMIPS64: ${{ matrix.gomips }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Linux musl
+        if: matrix.os == 'linux' && matrix.variant == 'musl'
+        run: |
+          set -xeuo pipefail
+          mkdir -p dist
+          go build -v -trimpath -o dist/sing-box -tags "${BUILD_TAGS}" \
+            -ldflags "-X 'github.com/sagernet/sing-box/constant.Version=${{ needs.calculate_version.outputs.version }}' ${LDFLAGS_SHARED} -s -w -buildid=" \
+            ./cmd/sing-box
+        env:
+          CGO_ENABLED: "1"
+          GOOS: linux
+          GOARCH: ${{ matrix.arch }}
+          GO386: ${{ matrix.go386 }}
+          GOARM: ${{ matrix.goarm }}
+          GOMIPS: ${{ matrix.gomips }}
+          GOMIPS64: ${{ matrix.gomips }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Linux non-variant
+        if: matrix.os == 'linux' && matrix.variant == ''
+        run: |
+          set -xeuo pipefail
+          mkdir -p dist
+          go build -v -trimpath -o dist/sing-box -tags "${BUILD_TAGS}" \
+            -ldflags "-X 'github.com/sagernet/sing-box/constant.Version=${{ needs.calculate_version.outputs.version }}' ${LDFLAGS_SHARED} -s -w -buildid=" \
+            ./cmd/sing-box
+        env:
+          CGO_ENABLED: "0"
+          GOOS: linux
+          GOARCH: ${{ matrix.arch }}
+          GO386: ${{ matrix.go386 }}
+          GOARM: ${{ matrix.goarm }}
+          GOMIPS: ${{ matrix.gomips }}
+          GOMIPS64: ${{ matrix.gomips }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Android
+        if: matrix.os == 'android'
+        run: |
+          set -xeuo pipefail
+          go install -v ./cmd/internal/build
+          export CC='${{ matrix.ndk }}-clang'
+          export CXX="${CC}++"
+          mkdir -p dist
+          GOOS=$BUILD_GOOS GOARCH=$BUILD_GOARCH build go build -v -trimpath -o dist/sing-box -tags "${BUILD_TAGS}" \
+            -ldflags "-X 'github.com/sagernet/sing-box/constant.Version=${{ needs.calculate_version.outputs.version }}' ${LDFLAGS_SHARED} -s -w -buildid=" \
+            ./cmd/sing-box
+        env:
+          CGO_ENABLED: "1"
+          BUILD_GOOS: ${{ matrix.os }}
+          BUILD_GOARCH: ${{ matrix.arch }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set archive name
+        run: |
+          set -xeuo pipefail
+          DIR_NAME="sing-box-${{ needs.calculate_version.outputs.version }}-${{ matrix.os }}-${{ matrix.arch }}"
+          if [[ -n "${{ matrix.goarm }}" ]]; then
+            DIR_NAME="${DIR_NAME}v${{ matrix.goarm }}"
+          elif [[ -n "${{ matrix.go386 }}" && "${{ matrix.go386 }}" != 'sse2' ]]; then
+            DIR_NAME="${DIR_NAME}-${{ matrix.go386 }}"
+          elif [[ -n "${{ matrix.gomips }}" && "${{ matrix.gomips }}" != 'hardfloat' ]]; then
+            DIR_NAME="${DIR_NAME}-${{ matrix.gomips }}"
+          fi
+
+          if [[ "${{ matrix.variant }}" == "glibc" ]]; then
+            DIR_NAME="${DIR_NAME}-glibc"
+          elif [[ "${{ matrix.variant }}" == "musl" ]]; then
+            DIR_NAME="${DIR_NAME}-musl"
+          fi
+
+          echo "DIR_NAME=${DIR_NAME}" >> "$GITHUB_ENV"
+
+      - name: Archive unix binary
+        run: |
+          set -xeuo pipefail
+          cd dist
+          mkdir -p "${DIR_NAME}"
+          cp ../LICENSE "${DIR_NAME}"
+          cp sing-box "${DIR_NAME}"
+          if [ -f libcronet.so ]; then
+            cp libcronet.so "${DIR_NAME}"
+          fi
+          tar -czvf "${DIR_NAME}.tar.gz" "${DIR_NAME}"
+          rm -rf "${DIR_NAME}"
+
+      - name: Cleanup
+        run: rm -f dist/sing-box dist/libcronet.so
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary-${{ matrix.os }}_${{ matrix.arch }}${{ matrix.goarm && format('v{0}', matrix.goarm) }}${{ matrix.go386 && format('_{0}', matrix.go386) }}${{ matrix.gomips && format('_{0}', matrix.gomips) }}${{ matrix.variant && format('-{0}', matrix.variant) }}
+          path: dist/*.tar.gz
+
+  build_windows:
+    name: Build windows/${{ matrix.arch }}
+    runs-on: windows-latest
+    needs:
+      - calculate_version
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { arch: amd64, naive: true }
+          - { arch: "386" }
+          - { arch: arm64, naive: true }
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ~1.25.7
+
+      - name: Build
+        if: matrix.naive
+        run: |
+          $TAGS = Get-Content release/DEFAULT_BUILD_TAGS_WINDOWS
+          $LDFLAGS_SHARED = Get-Content release/LDFLAGS
+          mkdir -p dist
+          go build -v -trimpath -o dist/sing-box.exe -tags "$TAGS" `
+            -ldflags "-X 'github.com/sagernet/sing-box/constant.Version=${{ needs.calculate_version.outputs.version }}' $LDFLAGS_SHARED -s -w -buildid=" `
+            ./cmd/sing-box
+        env:
+          CGO_ENABLED: "0"
+          GOOS: windows
+          GOARCH: ${{ matrix.arch }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build
+        if: ${{ !matrix.naive }}
+        run: |
+          $TAGS = Get-Content release/DEFAULT_BUILD_TAGS_OTHERS
+          $LDFLAGS_SHARED = Get-Content release/LDFLAGS
+          mkdir -p dist
+          go build -v -trimpath -o dist/sing-box.exe -tags "$TAGS" `
+            -ldflags "-X 'github.com/sagernet/sing-box/constant.Version=${{ needs.calculate_version.outputs.version }}' $LDFLAGS_SHARED -s -w -buildid=" `
+            ./cmd/sing-box
+        env:
+          CGO_ENABLED: "0"
+          GOOS: windows
+          GOARCH: ${{ matrix.arch }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract libcronet.dll
+        if: matrix.naive
+        run: |
+          $CRONET_GO_VERSION = Get-Content .github/CRONET_GO_VERSION
+          $env:CGO_ENABLED = "0"
+          go run -v "github.com/sagernet/cronet-go/cmd/build-naive@$CRONET_GO_VERSION" extract-lib --target windows/${{ matrix.arch }} -o dist
+
+      - name: Archive
+        run: |
+          $DIR_NAME = "sing-box-${{ needs.calculate_version.outputs.version }}-windows-${{ matrix.arch }}"
+          mkdir "dist/$DIR_NAME"
+          Copy-Item LICENSE "dist/$DIR_NAME"
+          Copy-Item "dist/sing-box.exe" "dist/$DIR_NAME"
+          if (Test-Path "dist/libcronet.dll") {
+            Copy-Item "dist/libcronet.dll" "dist/$DIR_NAME"
+          }
+          Compress-Archive -Path "dist/$DIR_NAME" -DestinationPath "dist/$DIR_NAME.zip"
+          Remove-Item -Recurse "dist/$DIR_NAME"
+
+      - name: Cleanup
+        run: |
+          Remove-Item dist/sing-box.exe -ErrorAction SilentlyContinue
+          Remove-Item dist/libcronet.dll -ErrorAction SilentlyContinue
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary-windows_${{ matrix.arch }}
+          path: dist/*.zip
+
+  upload_release:
+    name: Upload Release assets
+    if: "!failure()"
+    runs-on: ubuntu-latest
+    needs:
+      - calculate_version
+      - build_unix
+      - build_windows
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          fetch-depth: 0
+
+      - name: Cache ghr
+        uses: actions/cache@v4
+        id: cache-ghr
+        with:
+          path: |
+            ~/go/bin/ghr
+          key: ghr
+
+      - name: Setup ghr
+        if: steps.cache-ghr.outputs.cache-hit != 'true'
+        run: |
+          cd "$HOME"
+          git clone https://github.com/nekohasekai/ghr ghr
+          cd ghr
+          go install -v .
+
+      - name: Set release metadata
+        run: |
+          git ls-remote --exit-code --tags origin v${{ needs.calculate_version.outputs.version }} || echo "PUBLISHED=false" >> "$GITHUB_ENV"
+          git tag v${{ needs.calculate_version.outputs.version }} -f
+          echo "VERSION=${{ needs.calculate_version.outputs.version }}" >> "$GITHUB_ENV"
+
+      - name: Download builds
+        uses: actions/download-artifact@v5
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Upload draft release
+        if: ${{ env.PUBLISHED == 'false' }}
+        run: |
+          export PATH="$PATH:$HOME/go/bin"
+          ghr --replace --draft --prerelease -p 5 "v${VERSION}" dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Replace existing release assets
+        if: ${{ env.PUBLISHED != 'false' }}
+        run: |
+          export PATH="$PATH:$HOME/go/bin"
+          ghr --replace -p 5 "v${VERSION}" dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
