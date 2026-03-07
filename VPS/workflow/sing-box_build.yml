@@ -23,7 +23,7 @@ jobs:
     name: Calculate version
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.outputs.outputs.version }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
@@ -35,20 +35,18 @@ jobs:
         with:
           go-version: ~1.25.7
 
-      - name: Use input version
-        if: github.event_name == 'workflow_dispatch' && inputs.version != ''
+      - name: Resolve version
+        id: version
+        shell: bash
         run: |
-          echo "version=${{ inputs.version }}" >> "$GITHUB_ENV"
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ inputs.version }}" ]]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="$(go run -v ./cmd/internal/read_tag --ci --nightly)"
+          fi
 
-      - name: Calculate version
-        if: github.event_name != 'workflow_dispatch' || inputs.version == ''
-        run: |
-          go run -v ./cmd/internal/read_tag --ci --nightly
-
-      - name: Set outputs
-        id: outputs
-        run: |
-          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
   build_unix:
     name: Build ${{ matrix.os }}/${{ matrix.arch }}${{ matrix.goarm && format('/v{0}', matrix.goarm) }}${{ matrix.go386 && format('/{0}', matrix.go386) }}${{ matrix.gomips && format('/{0}', matrix.gomips) }}${{ matrix.variant && format('/{0}', matrix.variant) }}
@@ -457,8 +455,23 @@ jobs:
       - name: Download builds
         uses: actions/download-artifact@v5
         with:
+          pattern: binary-*
           path: dist
           merge-multiple: true
+
+      - name: Verify downloaded assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          shopt -s nullglob
+          assets=(dist/*.tar.gz dist/*.zip)
+          if (( ${#assets[@]} == 0 )); then
+            echo "No release assets were downloaded into dist/"
+            exit 1
+          fi
+          printf 'Downloaded assets:\n'
+          printf ' - %s\n' "${assets[@]}"
 
       - name: Upload draft release
         if: ${{ env.PUBLISHED == 'false' }}
