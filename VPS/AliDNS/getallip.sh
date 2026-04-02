@@ -3,8 +3,8 @@
 DNS_SERVER="8.8.8.8"
 # 目标域名
 DOMAIN="example.com"
-SUBNETS=(
-    # CT
+
+CT_SUBNETS=(
     111.180.138.0/24
     42.81.147.0/24
     61.134.71.0/24
@@ -35,8 +35,9 @@ SUBNETS=(
     42.101.77.0/24
     113.219.132.0/24
     116.53.37.0/24
+)
 
-    # CU
+CU_SUBNETS=(
     180.95.178.0/24
     211.91.233.0/24
     157.148.78.0/24
@@ -65,8 +66,9 @@ SUBNETS=(
     14.205.46.0/24
     218.60.173.0/24
     218.24.86.0/24
+)
 
-    # CM
+CM_SUBNETS=(
     111.2.112.0/24
     36.150.235.0/24
     111.51.133.0/24
@@ -100,12 +102,21 @@ SUBNETS=(
     117.180.226.0/24
 )
 
-TMP_FILE=$(mktemp)
+collect_ips() {
+    local output_file="$1"
+    shift
+    local subnets=("$@")
+    local tmp_file
+    tmp_file=$(mktemp)
 
-for subnet in "${SUBNETS[@]}"; do
-    dig @$DNS_SERVER $DOMAIN +short +subnet=$subnet >> "$TMP_FILE"
-done
+    for subnet in "${subnets[@]}"; do
+        dig @"$DNS_SERVER" "$DOMAIN" +short +subnet="$subnet" >> "$tmp_file"
+    done
 
-grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' "$TMP_FILE" | sort -u > ip.txt
+    grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' "$tmp_file" | sort -u > "$output_file"
+    rm -f "$tmp_file"
+}
 
-rm -f "$TMP_FILE"
+collect_ips "CT.txt" "${CT_SUBNETS[@]}"
+collect_ips "CU.txt" "${CU_SUBNETS[@]}"
+collect_ips "CM.txt" "${CM_SUBNETS[@]}"
