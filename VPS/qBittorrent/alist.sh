@@ -48,32 +48,40 @@ if [ -z "$name" ]; then
   exit 1
 fi
 
+is_blacklisted=false
+
 if [ -n "$filter" ]; then
   if echo "$BLACKLIST_JSON" | jq -e --arg f "$filter" '
       any(.[]; $f | contains(.))
     ' > /dev/null; then
-    exit 0
+    is_blacklisted=true
   fi
 fi
 
-response=$(curl -s -X POST "$url/api/auth/login" \
-  -H "Content-Type: application/json" \
-  -d "{\"username\": \"$username\", \"password\": \"$password\"}")
+if [ "$is_blacklisted" = false ]; then
+  response=$(curl -s -X POST "$url/api/auth/login" \
+    -H "Content-Type: application/json" \
+    -d "{\"username\": \"$username\", \"password\": \"$password\"}")
 
-token=$(echo "$response" | jq -r '.data.token')
+  token=$(echo "$response" | jq -r '.data.token')
 
-curl -s --location --request POST "$url/api/fs/copy" \
-  --header "Authorization:$token" \
-  --header "Content-Type: application/json" \
-  --data-raw '{
-    "src_dir": "'"$pathform"'",
-    "dst_dir": "'"$pathto"'",
-    "names": [
-        "'"$name"'"
-    ]
-  }'
+  curl -s --location --request POST "$url/api/fs/copy" \
+    --header "Authorization:$token" \
+    --header "Content-Type: application/json" \
+    --data-raw '{
+      "src_dir": "'"$pathform"'",
+      "dst_dir": "'"$pathto"'",
+      "names": [
+          "'"$name"'"
+      ]
+    }'
+fi
 
-ENCODED_NAME=$(urlencode "$name")
+if [ "$is_blacklisted" = true ]; then
+  ENCODED_NAME=$(urlencode "[x] $name")
+else
+  ENCODED_NAME=$(urlencode "$name")
+fi
 curl -s -o /dev/null -X POST "${URL}/sendMessage" \
   -d chat_id="${chat_ID}" \
   -d text="$ENCODED_NAME"
