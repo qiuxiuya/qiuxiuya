@@ -5,16 +5,16 @@ QBT_BASE_URL="https://example.com"
 QBT_USER="your_username"
 QBT_PASS="your_password"
 FEEDS_JSON="$HOME/.config/qBittorrent/rss/feeds.json"
+RULES_JSON="$HOME/.config/qBittorrent/rss/download_rules.json"
 
-# 规则映射：左边是匹配关键词，右边是规则名
-# 同一个 feed 只会被第一个匹配到的规则收录
-# 未匹配任何关键词的 feed 会被归入 DEFAULT_RULE（留空则丢弃）
+# 规则映射：左边是匹配关键词，右边是 download_rules.json 里的规则名
+# 同一个 feed 只被第一个匹配的规则收录
+# DEFAULT_RULE：不匹配任何关键词时的兜底规则名，留空则丢弃
 RULES='{
-  "CR":  "RULE_CR",
-  "MKV": "RULE_MKV",
-  "720p": "RULE_720P"
+  "CR":  "CR",
+  "MKV": "RSS"
 }'
-DEFAULT_RULE=""   # 不匹配任何关键词时的兜底规则名，留空则跳过该 feed
+DEFAULT_RULE=""
 
 BLACKLIST_JSON='[
   "example-blacklist-keyword-1",
@@ -23,7 +23,8 @@ BLACKLIST_JSON='[
 
 command -v jq  >/dev/null 2>&1 || { echo "missing: jq";   exit 1; }
 command -v curl>/dev/null 2>&1 || { echo "missing: curl";  exit 1; }
-[[ -f "$FEEDS_JSON" ]] || { echo "not found: $FEEDS_JSON"; exit 1; }
+[[ -f "$FEEDS_JSON"  ]] || { echo "not found: $FEEDS_JSON";  exit 1; }
+[[ -f "$RULES_JSON"  ]] || { echo "not found: $RULES_JSON";  exit 1; }
 
 COOKIE_JAR="$(mktemp -t qbt_cookie.XXXXXX)"
 trap 'rm -f "$COOKIE_JAR"' EXIT
@@ -66,7 +67,7 @@ match_rule() {
 }
 
 declare -A seen
-declare -A rule_feeds
+declare -A rule_feeds   # rule_name → 换行分隔的 URL
 
 while IFS=$'\t' read -r name url; do
   is_blacklisted "$name" "$url" && continue
@@ -83,38 +84,17 @@ done < <(jq -r 'to_entries[] | select((.value.url // "") != "") | "\(.key)\t\(.v
 
 set_rule() {
   local rule_name="$1"
-  local affected_feeds_json="$2"
+  local affected_feeds_json="$2"   # JSON 数组字符串
 
+  # 从 download_rules.json 取模板，移除运行时字段，注入新的 affectedFeeds
   local rule_def
-  rule_def="$(jq -n --argjson feeds "$affected_feeds_json" '{
-    enabled: true,
-    affectedFeeds: $feeds,
-    mustContain: "",
-    mustNotContain: "",
-    episodeFilter: "",
-    ignoreDays: 0,
-    priority: 0,
-    smartFilter: false,
-    useRegex: false,
-    assignedCategory: "",
-    savePath: "",
-    torrentContentLayout: null,
-    torrentParams: {
-      category: "",
-      download_limit: -1,
-      download_path: "",
-      inactive_seeding_time_limit: -2,
-      operating_mode: "AutoManaged",
-      ratio_limit: -2,
-      save_path: "",
-      seeding_time_limit: -2,
-      skip_checking: false,
-      tags: [""],
-      upload_limit: -1,
-      stopped: null,
-      content_layout: null
-    }
-  }')"
+  rule_def="$(jq -n \
+    --argjson template "$(jq --arg r "$rule_name" '.[$r]' "$RULES_JSON")" \
+    --argjson feeds "$affected_feeds_json" \
+    '$template
+     | del(.lastMatch, .previouslyMatchedEpisodes)
+     | .affectedFeeds = $feeds'
+  )"
 
   local curl_args=(-fsS -X POST "$QBT_BASE_URL/api/v2/rss/setRule")
   $USE_LOGIN && curl_args+=(-b "$COOKIE_JAR")
@@ -126,6 +106,12 @@ set_rule() {
 
 total_feeds=0
 for rule_name in "${!rule_feeds[@]}"; do
+  # 校验规则名在 download_rules.json 中存在
+  if ! jq -e --arg r "$rule_name" 'has($r)' "$RULES_JSON" >/dev/null 2>&1; then
+    echo "warn: rule '$rule_name' not found in $RULES_JSON, skipping"
+    continue
+  fi
+
   mapfile -t urls < <(printf '%s' "${rule_feeds[$rule_name]}" | grep -v '^$')
   feeds_json="$(printf '%s\n' "${urls[@]}" | jq -R . | jq -s .)"
   set_rule "$rule_name" "$feeds_json"
