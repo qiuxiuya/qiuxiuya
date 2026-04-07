@@ -67,7 +67,7 @@ match_rule() {
 }
 
 declare -A seen
-declare -A rule_feeds   # rule_name → 换行分隔的 URL
+declare -A rule_feeds
 
 while IFS=$'\t' read -r name url; do
   is_blacklisted "$name" "$url" && continue
@@ -84,9 +84,8 @@ done < <(jq -r 'to_entries[] | select((.value.url // "") != "") | "\(.key)\t\(.v
 
 set_rule() {
   local rule_name="$1"
-  local affected_feeds_json="$2"   # JSON 数组字符串
+  local affected_feeds_json="$2"
 
-  # 从 download_rules.json 取模板，移除运行时字段，注入新的 affectedFeeds
   local rule_def
   rule_def="$(jq -n \
     --argjson template "$(jq --arg r "$rule_name" '.[$r]' "$RULES_JSON")" \
@@ -106,7 +105,6 @@ set_rule() {
 
 total_feeds=0
 for rule_name in "${!rule_feeds[@]}"; do
-  # 校验规则名在 download_rules.json 中存在
   if ! jq -e --arg r "$rule_name" 'has($r)' "$RULES_JSON" >/dev/null 2>&1; then
     echo "warn: rule '$rule_name' not found in $RULES_JSON, skipping"
     continue
