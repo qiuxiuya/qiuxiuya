@@ -42,10 +42,11 @@ sniffer:
   enable: true
   force-dns-mapping: true
   parse-pure-ip: true
-  override-destination: true
+  override-destination: false
   sniff:
     HTTP:
       ports: [80, 8080-8880]
+      override-destination: true
     TLS:
       ports: [443, 8443]
     QUIC:
@@ -80,16 +81,11 @@ dns:
   fake-ip-range: 198.18.0.0/15
   fake-ip-range6: fdfe:dcba:9876::1/64
   fake-ip-ttl: 1
+  fake-ip-filter-mode: rule
   fake-ip-filter:
-    - "*"
-    - "+.lan"
-    - "+.local"
-    - "+.market.xiaomi.com"
-    - "+.direct"
-    - "+.msftconnecttest.com"
-    - "+.msftncsi.com"
-    - "rule-set:geosite-connectivity-check"
-    - "rule-set:geosite-private"
+    - RULE-SET,geosite-connectivity-check,real-ip
+    - RULE-SET,geosite-private,real-ip
+    - MATCH,fake-ip
   nameserver:
     - "tls://dot.pub"
 
@@ -133,7 +129,6 @@ rule-providers:
     path: ./providers/rules/geoip-cn.mrs
     url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo/geoip/cn.mrs"
 rules:
-  - DST-PORT,53,dns
   - RULE-SET,AD,REJECT-DROP
   - RULE-SET,geosite-google,Proxy
   - RULE-SET,geosite-cn,direct
