@@ -53,13 +53,14 @@ def sync_subdomain(subdomain, current_ips):
         for ip, record_id in existing_ip_map.items():
             delete_record(record_id, ip, subdomain)
         return
-    for ip in current_ips:
-        if ip not in existing_ip_map:
-            add_record(subdomain, ip)
 
     for ip, record_id in existing_ip_map.items():
         if ip not in current_ips:
             delete_record(record_id, ip, subdomain)
+    
+    for ip in current_ips:
+        if ip not in existing_ip_map:
+            add_record(subdomain, ip)
 
 def get_ips_from_file(file_path):
     if not os.path.exists(file_path):
