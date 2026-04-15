@@ -34,14 +34,32 @@
           "doh.pub": [
             "120.53.53.53",
             "1.12.12.21"
+          ],
+          "dns.alidns.com": [
+            "223.5.5.5",
+            "223.6.6.6"
           ]
         }
       },
       {
-        "type": "tls",
+        "type": "group",
         "tag": "local",
+        "servers": [
+          "tls",
+          "quic"
+        ]
+      },
+      {
+        "type": "tls",
+        "tag": "tls",
         "domain_resolver": "host",
         "server": "dot.pub"
+      },
+      {
+        "type": "quic",
+        "tag": "quic",
+        "domain_resolver": "host",
+        "server": "dns.alidns.com"
       },
       {
         "type": "fakeip",
@@ -74,12 +92,10 @@
       },
       {
         "rule_set": "geosite-cn",
-        "server": "local",
-        "strategy": "prefer_ipv4"
+        "server": "local"
       }
     ],
-    "final": "local",
-    "independent_cache": true
+    "final": "local"
   },
   "inbounds": [
     {
@@ -114,7 +130,7 @@
   "route": {
     "rules": [
       {
-        "inbound": [
+        "sniffer": [
           "http",
           "tls",
           "quic",
@@ -155,6 +171,14 @@
       {
         "rule_set": "google",
         "outbound": "Global"
+      },
+      {
+        "rule_set": [
+          "geosite-cn"
+        ],
+        "action": "resolve",
+        "strategy": "prefer_ipv4",
+        "match_only": true
       },
       {
         "rule_set": [

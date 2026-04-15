@@ -66,7 +66,6 @@
       }
     ],
     "final": "google",
-    "strategy": "prefer_ipv4",
     "independent_cache": true
   },
   "inbounds": [
@@ -101,7 +100,7 @@
   "route": {
     "rules": [
       {
-        "inbound": [
+        "sniffer": [
           "http",
           "tls",
           "quic",
@@ -126,7 +125,8 @@
       {
         "rule_set": "unlock",
         "invert": true,
-        "action": "resolve"
+        "action": "resolve",
+        "strategy": "prefer_ipv4"
       },
       {
         "ip_is_private": true,
