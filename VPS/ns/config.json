@@ -1,0 +1,19 @@
+{
+    "tg": {
+        "token": "bot_token",
+        "id": [
+            "chat_id1",
+            "chat_id2"
+        ]
+    },
+    "cookies": [
+        {
+            "session": "",
+            "smac": ""
+        },
+        {
+            "session": "",
+            "smac": ""
+        }
+    ]
+}
