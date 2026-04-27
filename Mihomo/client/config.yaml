@@ -103,7 +103,7 @@ rule-providers:
   AD:
     <<: *mrs-domain
     path: ./providers/rules/AD.mrs
-    url: "https://github.com/qiuxiuya/adblockfilters/raw/refs/heads/main/rules/adblockmihomo.mrs"
+    url: "https://raw.githubusercontent.com/qiuxiuya/AdRules/main/adrules-mihomo.mrs"
   geosite-google:
     <<: *mrs-domain
     path: ./providers/rules/geosite-google.mrs

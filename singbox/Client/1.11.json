@@ -148,7 +148,7 @@
         "type": "remote",
         "tag": "ad",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblocksingbox.srs",
+        "url": "https://raw.githubusercontent.com/qiuxiuya/AdRules/main/adrules-singbox.srs",
         "download_detour": "Global"
       },
       {
