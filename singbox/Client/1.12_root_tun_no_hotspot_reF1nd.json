@@ -45,8 +45,7 @@
         "type": "group",
         "tag": "local",
         "servers": [
-          "tls",
-          "quic"
+          "tls"
         ]
       },
       {
@@ -82,26 +81,21 @@
         "action": "reject"
       },
       {
-        "type": "logical",
-        "mode": "and",
-        "rules": [
-          {
-            "rule_set": [
-              "geosite-connectivity-check",
-              "geosite-private"
-            ],
-            "invert": true
-          }
-        ],
-        "server": "fakeip",
-        "rewrite_ttl": 1
-      },
-      {
         "rule_set": "geosite-cn",
         "server": "local"
+      },
+      {
+        "rule_set": [
+          "geosite-connectivity-check",
+          "geosite-private"
+        ],
+        "invert": true,
+        "server": "fakeip",
+        "rewrite_ttl": 1
       }
     ],
-    "final": "local"
+    "final": "local",
+    "independent_cache": true
   },
   "inbounds": [
     {
@@ -117,11 +111,9 @@
         "172.18.0.1/30",
         "fdfe:dcba:9876::1/126"
       ],
-      "mtu": 9000,
-      "stack": "mixed",
+      "stack": "system",
       "auto_route": true,
-      "strict_route": true,
-      "auto_redirect": true
+      "strict_route": true
     }
   ],
   "outbounds": [
@@ -151,11 +143,12 @@
       },
       {
         "source_ip_cidr": [
+          "172.18.0.1/30",
           "fdfe:dcba:9876::1/126",
-          "172.16.0.0/12",
           "127.0.0.0/8"
         ],
         "invert": true,
+        "action": "bypass",
         "outbound": "direct"
       },
       {
@@ -167,17 +160,13 @@
           },
           {
             "source_ip_cidr": [
+              "172.18.0.1/30",
               "fdfe:dcba:9876::1/126",
-              "172.16.0.0/12",
               "127.0.0.0/8"
             ]
           }
         ],
         "action": "hijack-dns"
-      },
-      {
-        "ip_is_private": true,
-        "outbound": "direct"
       },
       {
         "clash_mode": "Global",
@@ -200,14 +189,7 @@
           "geosite-cn"
         ],
         "action": "resolve",
-        "strategy": "prefer_ipv4",
-        "match_only": true
-      },
-      {
-        "rule_set": [
-          "geosite-cn"
-        ],
-        "outbound": "direct"
+        "strategy": "prefer_ipv4"
       },
       {
         "action": "resolve",
@@ -215,7 +197,8 @@
       },
       {
         "rule_set": [
-          "geoip-cn"
+          "geoip-cn",
+          "geoip-private"
         ],
         "outbound": "direct"
       }
@@ -236,7 +219,13 @@
       {
         "type": "remote",
         "tag": "geoip-cn",
-        "url": "https://raw.githubusercontent.com/qiuxiuya/Rules/refs/heads/geoip/geoip.srs",
+        "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo/geoip/cn.srs",
+        "download_detour": "Global"
+      },
+      {
+        "type": "remote",
+        "tag": "geoip-private",
+        "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo/geoip/private.srs",
         "download_detour": "Global"
       },
       {
@@ -260,7 +249,10 @@
     ],
     "final": "Global",
     "auto_detect_interface": true,
-    "default_domain_resolver": "local"
+    "default_domain_resolver": {
+      "server": "local",
+      "disable_cache": true
+    }
   },
   "experimental": {
     "cache_file": {
