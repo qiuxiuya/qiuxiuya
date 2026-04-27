@@ -65,7 +65,7 @@
       ],
       "interface_name": "sing-box",
       "auto_route": true,
-      "stack": "gvisor"
+      "stack": "system"
     },
     {
       "type": "mixed",
