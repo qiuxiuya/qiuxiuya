@@ -105,13 +105,16 @@
     },
     {
       "type": "tun",
+      "tag": "tun",
+      "interface_name": "sing-box",
       "address": [
         "172.18.0.1/30",
         "fdfe:dcba:9876::1/126"
       ],
-      "interface_name": "sing-box",
+      "stack": "system",
       "auto_route": true,
-      "stack": "system"
+      "strict_route": true,
+      "auto_redirect": true
     }
   ],
   "outbounds": [
@@ -129,6 +132,12 @@
   ],
   "route": {
     "rules": [
+      {
+        "protocol": [
+          "quic"
+        ],
+        "action": "reject"
+      },
       {
         "sniffer": [
           "http",
@@ -176,15 +185,14 @@
         "rule_set": [
           "geosite-cn"
         ],
-        "action": "resolve",
-        "strategy": "prefer_ipv4",
-        "match_only": true
+        "outbound": "direct"
       },
       {
         "rule_set": [
           "geosite-cn"
         ],
-        "outbound": "direct"
+        "action": "resolve",
+        "strategy": "prefer_ipv4"
       },
       {
         "action": "resolve",

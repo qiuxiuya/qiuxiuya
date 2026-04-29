@@ -45,7 +45,8 @@
         "type": "group",
         "tag": "local",
         "servers": [
-          "tls"
+          "tls",
+          "quic"
         ]
       },
       {
@@ -81,10 +82,6 @@
         "action": "reject"
       },
       {
-        "rule_set": "geosite-cn",
-        "server": "local"
-      },
-      {
         "rule_set": [
           "geosite-connectivity-check",
           "geosite-private"
@@ -92,10 +89,13 @@
         "invert": true,
         "server": "fakeip",
         "rewrite_ttl": 1
+      },
+      {
+        "rule_set": "geosite-cn",
+        "server": "local"
       }
     ],
-    "final": "local",
-    "independent_cache": true
+    "final": "local"
   },
   "inbounds": [
     {
@@ -133,10 +133,15 @@
   "route": {
     "rules": [
       {
+        "protocol": [
+          "quic"
+        ],
+        "action": "reject"
+      },
+      {
         "sniffer": [
           "http",
           "tls",
-          "quic",
           "dns"
         ],
         "action": "sniff",
@@ -170,6 +175,10 @@
         "action": "hijack-dns"
       },
       {
+        "ip_is_private": true,
+        "outbound": "direct"
+      },
+      {
         "clash_mode": "Global",
         "outbound": "Global"
       },
@@ -189,6 +198,12 @@
         "rule_set": [
           "geosite-cn"
         ],
+        "outbound": "direct"
+      },
+      {
+        "rule_set": [
+          "geosite-cn"
+        ],
         "action": "resolve",
         "strategy": "prefer_ipv4"
       },
@@ -198,8 +213,7 @@
       },
       {
         "rule_set": [
-          "geoip-cn",
-          "geoip-private"
+          "geoip-cn"
         ],
         "outbound": "direct"
       }
@@ -225,12 +239,6 @@
       },
       {
         "type": "remote",
-        "tag": "geoip-private",
-        "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo/geoip/private.srs",
-        "download_detour": "Global"
-      },
-      {
-        "type": "remote",
         "tag": "google",
         "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo/geosite/google.srs",
         "download_detour": "Global"
@@ -250,10 +258,7 @@
     ],
     "final": "Global",
     "auto_detect_interface": true,
-    "default_domain_resolver": {
-      "server": "local",
-      "disable_cache": true
-    }
+    "default_domain_resolver": "local"
   },
   "experimental": {
     "cache_file": {
