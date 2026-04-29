@@ -100,10 +100,15 @@
   "route": {
     "rules": [
       {
+        "protocol": [
+          "quic"
+        ],
+        "action": "reject"
+      },
+      {
         "sniffer": [
           "http",
           "tls",
-          "quic",
           "dns"
         ],
         "action": "sniff",
