@@ -1,16 +1,21 @@
 [Unit]
 Description=realm
 After=network-online.target
-Wants=network-online.target systemd-networkd-wait-online.service
- 
+Wants=network-online.target
+
 [Service]
 Type=simple
 User=root
+WorkingDirectory=/etc/realm
+
+ExecStart=/etc/realm/realm -c /etc/realm/config.toml
+
 Restart=on-failure
 RestartSec=5s
-DynamicUser=true
-WorkingDirectory=/etc/realm
-ExecStart=/etc/realm/realm -c /etc/realm/config.toml
- 
+
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+NoNewPrivileges=true
+
 [Install]
 WantedBy=multi-user.target

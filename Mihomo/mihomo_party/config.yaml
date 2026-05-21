@@ -1,0 +1,127 @@
+mrs-domain:
+  &mrs-domain { type: http, behavior: domain, format: mrs, interval: 86400 }
+mrs-ipcidr:
+  &mrs-ipcidr { type: http, behavior: ipcidr, format: mrs, interval: 86400 }
+text-domain:
+  &text-domain { type: http, behavior: domain, format: text, interval: 86400 }
+text-ipcidr:
+  &text-ipcidr { type: http, behavior: domain, format: text, interval: 86400 }
+p: 
+  &p { type: http, interval: 86400, health-check: { enable: true, url: http://cp.cloudflare.com/generate_204, interval: 1800, timeout: 5000, lazy: true } }
+
+ntp:
+  enable: true
+  write-to-system: false
+  server: time.apple.com
+  port: 123
+  interval: 30
+
+mixed-port: 2080
+redir-port: 9797
+tproxy-port: 9898
+ipv6: true
+allow-lan: true
+unified-delay: false
+tcp-concurrent: true
+external-controller: 127.0.0.1:9090
+external-ui: ./providers/dashboard/
+external-ui-url: "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip"
+log-level: info
+
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  parse-pure-ip: true
+  override-destination: false
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+tun:
+  enable: true
+  stack: gvisor
+  dns-hijack:
+    - any:53
+    - tcp://any:53
+  auto-detect-interface: true
+  auto-route: true
+  device: mihomo
+
+hosts:
+  dot.pub: [120.53.53.53, 1.12.12.21]
+  doh.pub: [120.53.53.53, 1.12.12.21]
+
+dns:
+  enable: true
+  prefer-h3: false
+  ipv6: true
+  use-hosts: true
+  use-system-hosts: true
+  enhanced-mode: fake-ip
+  listen: :1053
+  fake-ip-range: 198.18.0.0/15
+  fake-ip-range6: fdfe:dcba:9876::1/64
+  fake-ip-ttl: 1
+  fake-ip-filter-mode: rule
+  fake-ip-filter:
+    - RULE-SET,geosite-connectivity-check,real-ip
+    - RULE-SET,geosite-private,real-ip
+    - MATCH,fake-ip
+  nameserver:
+    - "tls://dot.pub"
+
+proxies:
+  - { name: "dns", type: dns }
+  - { name: "direct", type: direct, udp: true, ip-version: ipv4-prefer }
+
+proxy-groups:
+  - name: "Proxy"
+    type: select
+    url: "http://cp.cloudflare.com/generate_204"
+    include-all: true
+
+rule-providers:
+  AD:
+    <<: *mrs-domain
+    path: ./providers/rules/AD.mrs
+    url: "https://raw.githubusercontent.com/qiuxiuya/AdRules/main/adrules-mihomo.mrs"
+  geosite-google:
+    <<: *mrs-domain
+    path: ./providers/rules/geosite-google.mrs
+    url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo/geosite/google.mrs"
+  geosite-cn:
+    <<: *mrs-domain
+    path: ./providers/rules/geosite-cn.mrs
+    url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo/geosite/cn.mrs"
+  geosite-connectivity-check:
+    <<: *mrs-domain
+    path: ./providers/rules/geosite-connectivity-check.mrs
+    url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo/geosite/connectivity-check.mrs"
+  geosite-private:
+    <<: *mrs-domain
+    path: ./providers/rules/geosite-private.mrs
+    url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo/geosite/private.mrs"
+  geoip-private:
+    <<: *mrs-ipcidr
+    path: ./providers/rules/geoip-private.mrs
+    url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo/geoip/private.mrs"
+  geoip-cn:
+    <<: *mrs-ipcidr
+    path: ./providers/rules/geoip-cn.mrs
+    url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo/geoip/cn.mrs"
+rules:
+  - RULE-SET,AD,REJECT-DROP
+  - RULE-SET,geosite-google,Proxy
+  - RULE-SET,geosite-cn,direct
+  - RULE-SET,geoip-private,direct
+  - RULE-SET,geoip-cn,direct
+  - MATCH,Proxy
