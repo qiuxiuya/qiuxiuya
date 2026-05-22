@@ -16,15 +16,15 @@ def load_config():
     if not os.path.exists(CFG): sys.exit(1)
     with open(CFG, encoding="utf-8") as f:
         c = json.load(f)
-    for s, k in [("aliyun","accessKeyId"),("aliyun","accessKeySecret"),("aliyun","REGION_ID"),
-                 ("traffic","THRESHOLD_GB"),("traffic","NOTIFY_INTERVAL_GB"),
+    for s, k in [("aliyun","access_key_id"),("aliyun","access_key_secret"),("aliyun","region_id"),
+                 ("traffic","stop_threshold_GB"),("traffic","notify_interval_GB"),
                  ("tg","bot_token"),("tg","chat_id")]:
         if k not in c.get(s, {}): sys.exit(1)
     a = c.setdefault("aliyun", {})
-    a["ALL_ECS"] = a.get("ALL_ECS", False)
-    a["ALL_REGION_ID"] = a.get("ALL_REGION_ID", False)
-    if not a["ALL_ECS"]:
-        er, rr = a.get("ECS_INSTANCE_ID"), a.get("REGION_ID")
+    a["all_ECS"] = a.get("all_ECS", False)
+    a["all_region_id"] = a.get("all_region_id", False)
+    if not a["all_ECS"]:
+        er, rr = a.get("ECS_instance_id"), a.get("region_id")
         if er is None: sys.exit(1)
         el = er if isinstance(er, list) else [er]
         rl = rr if isinstance(rr, list) else [rr]
@@ -33,10 +33,11 @@ def load_config():
             elif len(rl) == 1: rl *= len(el)
             else: sys.exit(1)
         a["_instances"] = list(zip(el, rl))
-        a["REGION_ID"] = rl[0]
+        a["region_id"] = rl[0]
     else:
         a["_instances"] = []
-    c.setdefault("traffic", {})["NOTIFY_THRESHOLD_GB"] = c["traffic"].get("NOTIFY_THRESHOLD_GB", 0)
+    c.setdefault("traffic", {})["notify_threshold_GB"] = c["traffic"].get("notify_threshold_GB", 0)
+    c.setdefault("tg", {})["notify_log"] = c["tg"].get("notify_log", True)
     return c
 
 
@@ -55,8 +56,8 @@ def query_traffic(cli):
     except: return None
 
 
-def get_targets(ak, sk, paired, rid, all_rid, all_ecs):
-    if not all_ecs:
+def get_targets(ak, sk, paired, rid, all_rid, all_ECS):
+    if not all_ECS:
         return paired
     if all_rid:
         # all regions
@@ -123,7 +124,7 @@ def tg_send(token, cid, msg):
 def main():
     c = load_config()
     a, t, g = c["aliyun"], c["traffic"], c["tg"]
-    ak, sk, rid = a["accessKeyId"], a["accessKeySecret"], a["REGION_ID"]
+    ak, sk, rid = a["access_key_id"], a["access_key_secret"], a["region_id"]
 
     # traffic
     tc = acs(ak, sk, rid)
@@ -133,7 +134,7 @@ def main():
 
     # state & notify
     state = json.load(open(ST, encoding="utf-8")) if os.path.exists(ST) else {"last_notified_traffic_gb": 0}
-    ni, nt = t["NOTIFY_INTERVAL_GB"], t.get("NOTIFY_THRESHOLD_GB", 0)
+    ni, nt = t["notify_interval_GB"], t.get("notify_threshold_GB", 0)
     if ni > 0 and total >= nt:
         last = state.get("last_notified_traffic_gb", 0)
         if int((total - nt) // ni) > int((max(0, last - nt)) // ni):
@@ -144,12 +145,12 @@ def main():
             with open(ST, "w", encoding="utf-8") as f: json.dump(state, f, indent=2)
 
     # targets
-    targets = get_targets(ak, sk, a["_instances"], rid, a.get("ALL_REGION_ID", False), a.get("ALL_ECS", False))
+    targets = get_targets(ak, sk, a["_instances"], rid, a.get("all_region_id", False), a.get("all_ECS", False))
     if not targets:
         tg_send(g["bot_token"], g["chat_id"], "未找到任何可操作的 ECS 实例，请检查配置。")
         sys.exit(1)
 
-    do_start = total < t["THRESHOLD_GB"]
+    do_start = total < t["stop_threshold_GB"]
     results = [(iid, rr, ecs_act(ak, sk, iid, rr, do_start)) for iid, rr in targets]
 
     ts = time.strftime('%Y-%m-%d %H:%M:%S')
@@ -157,7 +158,16 @@ def main():
     for iid, rr, st in results:
         out += f"\n区域ID: {rr}\nECS ID: {iid}\n运行情况: {st}"
     print(out)
-    tg_send(g["bot_token"], g["chat_id"], out)
+    if g.get("notify_log", True):
+        tg_send(g["bot_token"], g["chat_id"], out)
+    else:
+        # 只在状态异常时通知（失败/错误信息）
+        errs = [(iid, rr, st) for iid, rr, st in results if "失败" in st or "异常" in st]
+        if errs:
+            err_msg = f"⚠️ 实例状态异常:\n时间: {ts}"
+            for iid, rr, st in errs:
+                err_msg += f"\n区域ID: {rr}\nECS ID: {iid}\n错误: {st}"
+            tg_send(g["bot_token"], g["chat_id"], err_msg)
 
 
 if __name__ == "__main__":

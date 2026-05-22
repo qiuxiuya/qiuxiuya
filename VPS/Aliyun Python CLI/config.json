@@ -1,19 +1,20 @@
 {
     "aliyun": {
-        "accessKeyId": "LTAIxxxxxxxxxxxx",
-        "accessKeySecret": "xxxxxxxxxxxxxxxxxx",
-        "REGION_ID": "cn-hongkong",
-        "ECS_INSTANCE_ID": "i-xxxxxxxxx",
-        "ALL_ECS": false,
-        "ALL_REGION_ID": false
+        "access_key_id": "LTAIxxxxxxxxxxxx",
+        "access_key_secret": "xxxxxxxxxxxxxxxxxx",
+        "region_id": "cn-hongkong",
+        "ECS_instance_id": "i-xxxxxxxxx",
+        "all_ECS": false,
+        "all_region_id": false
     },
     "traffic": {
-        "THRESHOLD_GB": 180,
-        "NOTIFY_THRESHOLD_GB": 50,
-        "NOTIFY_INTERVAL_GB": 50
+        "stop_threshold_GB": 180,
+        "notify_threshold_GB": 50,
+        "notify_interval_GB": 50
     },
     "tg": {
         "bot_token": "1234567890:AAxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "chat_id": "123456789"
+        "chat_id": "123456789",
+        "notify_log": false
     }
 }

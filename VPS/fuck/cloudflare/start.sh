@@ -1,8 +1,7 @@
 #!/bin/bash
 
 PORT="443,8443"
-ASN_ARG=""
-CFCOLO=""
+ASN_ARG="" CFCOLO="" URL=""
 
 RATE=40000
 RETRIES=1
@@ -19,15 +18,16 @@ SCAN_JSON="scan.json"
 RESULT_FILE="result.txt"
 CFST_TMP="cfst.tmp"
 
-while getopts "p:a:t:Fc:" opt; do
+while getopts "p:a:t:Fc:u:" opt; do
     case $opt in
         p) PORT="$OPTARG" ;;
         a) ASN_ARG="$OPTARG" ;;
         t) RATE="$OPTARG" ;;
         F) PORT="0-65535" ;;
         c) CFCOLO="$OPTARG" ;;
+        u) URL="$OPTARG" ;;
         *)
-            echo "Usage: $0 [-p port] [-a asn] [-t rate] [-F] [-c cfcolo]"
+            echo "Usage: $0 [-p port] [-a asn] [-t rate] [-F] [-c cfcolo] [-u url]"
             exit 1
             ;;
     esac
@@ -54,7 +54,7 @@ send_text() {
 run_cfst() {
     local json="$1"
 
-    ./cfst -m "$json" -httping -dd -p 0 -o "$CFST_TMP" ${CFCOLO:+-cfcolo "$CFCOLO"}
+    ./cfst -m "$json" -httping -dd -p 0 -o "$CFST_TMP" ${CFCOLO:+-cfcolo "$CFCOLO"} ${URL:+-url "$URL"}
 
     if [[ -f "$CFST_TMP" ]]; then
         tr -d '\r' < "$CFST_TMP" | awk -F',' '
@@ -90,12 +90,7 @@ enrich_result_lite() {
 
     [[ -s "$file" ]] || return 0
 
-    if ! command -v jq >/dev/null 2>&1; then
-        sort_result_by_ip "$file" > "${file}.sorted" && mv "${file}.sorted" "$file"
-        return 0
-    fi
-
-    if [[ -z "$IPINFO_TOKEN" || "$IPINFO_TOKEN" == "你的ipinfo_token" ]]; then
+    if ! command -v jq >/dev/null 2>&1 || [[ -z "$IPINFO_TOKEN" || "$IPINFO_TOKEN" == "你的ipinfo_token" ]]; then
         sort_result_by_ip "$file" > "${file}.sorted" && mv "${file}.sorted" "$file"
         return 0
     fi
@@ -116,10 +111,10 @@ enrich_result_lite() {
 
     split -l 1000 "$tmpdir/ips.txt" "$tmpdir/ips."
 
+    local payload
     for chunk in "$tmpdir"/ips.*; do
         [[ -s "$chunk" ]] || continue
 
-        local payload
         payload="$(jq -R -s -c 'split("\n") | map(select(length > 0))' "$chunk")"
 
         if ! curl -fsS -X POST "${IPINFO_BATCH_API}?token=${IPINFO_TOKEN}" \
