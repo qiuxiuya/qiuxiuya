@@ -60,7 +60,7 @@
     {
       "type": "tun",
       "address": [
-        "172.19.0.0/30",
+        "198.17.0.1/30",
         "fdfe:dcba:9876::/126"
       ],
       "interface_name": "sing-box",

@@ -40,6 +40,7 @@ Wants=network-online.target
 Type=simple
 User=root
 WorkingDirectory=/etc/realm
+LimitNOFILE=1048576
 ExecStart=/etc/realm/realm -c /etc/realm/config.toml
 Restart=on-failure
 RestartSec=5s

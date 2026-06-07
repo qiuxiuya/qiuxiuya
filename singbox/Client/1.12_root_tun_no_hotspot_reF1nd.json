@@ -108,7 +108,7 @@
       "tag": "tun",
       "interface_name": "sing-box",
       "address": [
-        "172.18.0.1/30",
+        "198.17.0.1/30",
         "fdfe:dcba:9876::1/126"
       ],
       "stack": "gvisor",
@@ -149,7 +149,7 @@
       },
       {
         "source_ip_cidr": [
-          "172.18.0.1/30",
+          "198.17.0.1/30",
           "fdfe:dcba:9876::1/126",
           "127.0.0.0/8"
         ],
@@ -166,7 +166,7 @@
           },
           {
             "source_ip_cidr": [
-              "172.18.0.1/30",
+              "198.17.0.1/30",
               "fdfe:dcba:9876::1/126",
               "127.0.0.0/8"
             ]
@@ -193,12 +193,6 @@
       {
         "rule_set": "google",
         "outbound": "Global"
-      },
-      {
-        "rule_set": [
-          "geosite-cn"
-        ],
-        "outbound": "direct"
       },
       {
         "rule_set": [
