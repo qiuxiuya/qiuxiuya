@@ -45,15 +45,21 @@
         "type": "group",
         "tag": "local",
         "servers": [
-          "tls",
-          "quic"
+          "ali",
+          "tx"
         ]
       },
       {
         "type": "tls",
-        "tag": "tls",
+        "tag": "tx",
         "domain_resolver": "host",
         "server": "dot.pub"
+      },
+      {
+        "type": "quic",
+        "tag": "ali",
+        "domain_resolver": "host",
+        "server": "dns.alidns.com"
       },
       {
         "type": "quic",
@@ -82,11 +88,23 @@
         "action": "reject"
       },
       {
-        "rule_set": [
-          "geosite-connectivity-check",
-          "geosite-private"
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          {
+            "rule_set": [
+              "geosite-connectivity-check",
+              "geosite-private"
+            ],
+            "invert": true
+          },
+          {
+            "query_type": [
+              "A",
+              "AAAA"
+            ]
+          }
         ],
-        "invert": true,
         "server": "fakeip",
         "rewrite_ttl": 1
       },

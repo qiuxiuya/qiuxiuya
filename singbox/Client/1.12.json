@@ -52,11 +52,23 @@
         "action": "reject"
       },
       {
-        "rule_set": [
-          "geosite-connectivity-check",
-          "geosite-private"
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          {
+            "rule_set": [
+              "geosite-connectivity-check",
+              "geosite-private"
+            ],
+            "invert": true
+          },
+          {
+            "query_type": [
+              "A",
+              "AAAA"
+            ]
+          }
         ],
-        "invert": true,
         "server": "fakeip",
         "rewrite_ttl": 1
       },
