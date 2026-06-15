@@ -28,7 +28,19 @@ else
     wget -q -O /etc/realm/realm https://github.com/qiuxiuya/qiuxiuya/raw/refs/heads/main/VPS/realm/realm-x86_64
 fi
 
-wget -q -O /etc/realm/config.toml https://raw.githubusercontent.com/qiuxiuya/qiuxiuya/refs/heads/main/VPS/realm/config.toml
+cat > /etc/realm/config.toml <<'EOF'
+[network]
+use_udp = true
+no_tcp = false
+
+[[endpoints]]
+listen = "0.0.0.0:233"
+remote = "114.5.1.4:233"
+
+#[[endpoints]]  #添加多个转发
+#listen = "[::]:443"
+#remote = "[2001:4860:4860::8888]:443"
+EOF
 
 cat > /etc/systemd/system/${SERVICE_NAME}.service <<EOF
 [Unit]
@@ -41,7 +53,7 @@ Type=simple
 User=root
 WorkingDirectory=/etc/realm
 LimitNOFILE=1048576
-ExecStart=/etc/realm/realm -c /etc/realm/config.toml
+ExecStart=/bin/bash -c 'ulimit -n 1048576 && exec /etc/realm/realm -c /etc/realm/config.toml'
 Restart=on-failure
 RestartSec=5s
 CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
