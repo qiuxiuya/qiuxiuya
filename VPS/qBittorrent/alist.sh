@@ -1,19 +1,22 @@
 #!/bin/bash
 
-TOKEN="TGbot Token"
-chat_ID="用户ID"
+TOKEN="TGbot Token"           #Telegram Bot 令牌
+chat_ID="用户ID"              #接收消息的用户/群组 ID
 URL="https://api.telegram.org/bot${TOKEN}"
 
-url="http://127.0.0.1:5244" #openlist地址
-username="username" #用户名
-password="passwd"  #密码
-pathform="/disk/bt"  #从openlist移动的起点目录
-pathto="/ACG/updating"  #从openlist移动的终点目录
+url="http://127.0.0.1:5244"   #openlist 地址
+username="username"           #用户名
+password="passwd"             #密码
 
-BLACKLIST_JSON='[
+PATH_MAPPING='[                #从 openlist 移动的路径映射（源目录 → 目标目录，可配置多组）
+  {"from": "/disk/", "to": "/1/updating"},
+  {"from": "/disk/1", "to": "/2/updating"}
+]'
+
+BLACKLIST_JSON='[              #黑名单列表（通过读取分类）
   "BT",
   "MKV"
-]'  #黑名单列表（通过读取分类）
+]'
 
 urlencode() {
     local raw="$1"
@@ -65,16 +68,18 @@ if [ "$is_blacklisted" = false ]; then
 
   token=$(echo "$response" | jq -r '.data.token')
 
-  curl -s --location --request POST "$url/api/fs/copy" \
-    --header "Authorization:$token" \
-    --header "Content-Type: application/json" \
-    --data-raw '{
-      "src_dir": "'"$pathform"'",
-      "dst_dir": "'"$pathto"'",
-      "names": [
-          "'"$name"'"
-      ]
-    }'
+  while IFS=$'\t' read -r pathform pathto; do
+    curl -s --location --request POST "$url/api/fs/copy" \
+      --header "Authorization:$token" \
+      --header "Content-Type: application/json" \
+      --data-raw '{
+        "src_dir": "'"$pathform"'",
+        "dst_dir": "'"$pathto"'",
+        "names": [
+            "'"$name"'"
+        ]
+      }'
+  done < <(echo "$PATH_MAPPING" | jq -r '.[] | "\(.from)\t\(.to)"')
 fi
 
 if [ "$is_blacklisted" = true ]; then
