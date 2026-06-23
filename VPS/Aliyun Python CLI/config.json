@@ -1,11 +1,23 @@
 {
     "aliyun": {
-        "access_key_id": "LTAIxxxxxxxxxxxx",
-        "access_key_secret": "xxxxxxxxxxxxxxxxxx",
+        "all_ECS": false,
+        "all_region_id": false,
         "region_id": "cn-hongkong",
         "ECS_instance_id": "i-xxxxxxxxx",
-        "all_ECS": false,
-        "all_region_id": false
+        "key": [
+            {
+                "access_key_id": "LTAIxxxxxxxxxxxx",
+                "access_key_secret": "xxxxxxxxxxxxxxxxxx",
+                "region_id": "cn-hongkong",
+                "ECS_instance_id": "i-xxxxxxxxx"
+            },
+            {
+                "access_key_id": "LTAIxxxxxxxxxxxx",
+                "access_key_secret": "xxxxxxxxxxxxxxxxxx",
+                "region_id": "cn-shanghai",
+                "ECS_instance_id": "i-yyyyyyyyy"
+            }
+        ]
     },
     "traffic": {
         "stop_threshold_GB": 180,

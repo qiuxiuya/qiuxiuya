@@ -12,30 +12,100 @@ CFG = os.path.join(DIR, "config.json")
 ST = os.path.join(DIR, "keep_state.json")
 
 
+def _parse_single_account(a, ak, sk, rid_override=None, er_override=None):
+    """解析单个账号配置，返回标准化 account dict，失败返回 None。
+    all_ECS / all_region_id 从顶层 a 读取，全局统一。"""
+    rid = rid_override if rid_override is not None else a.get("region_id")
+    all_ecs = a.get("all_ECS", False)
+    all_rid = a.get("all_region_id", False)
+
+    if not all_ecs:
+        er = er_override if er_override is not None else a.get("ECS_instance_id")
+        if er is None or rid is None:
+            print(f"警告: 账号 {ak[:8]}... 缺少 ECS_instance_id/region_id，已跳过")
+            return None
+        el = er if isinstance(er, list) else [er]
+        rl = rid if isinstance(rid, list) else [rid]
+        if len(el) != len(rl):
+            if len(el) == 1:
+                el *= len(rl)
+            elif len(rl) == 1:
+                rl *= len(el)
+            else:
+                print(f"警告: 账号 {ak[:8]}... ECS_instance_id/region_id 数量不匹配，已跳过")
+                return None
+        instances = list(zip(el, rl))
+        rid_first = rl[0]
+    else:
+        instances = []
+        rid_first = rid if rid else "cn-hongkong"
+
+    return {
+        "access_key_id": ak,
+        "access_key_secret": sk,
+        "region_id": rid_first,
+        "_instances": instances,
+        "all_ECS": all_ecs,
+        "all_region_id": all_rid,
+    }
+
+
 def load_config():
     if not os.path.exists(CFG): sys.exit(1)
     with open(CFG, encoding="utf-8") as f:
         c = json.load(f)
-    for s, k in [("aliyun","access_key_id"),("aliyun","access_key_secret"),("aliyun","region_id"),
-                 ("traffic","stop_threshold_GB"),("traffic","notify_interval_GB"),
-                 ("tg","bot_token"),("tg","chat_id")]:
+
+    # 验证顶级必填字段（traffic + tg）
+    for s, k in [("traffic", "stop_threshold_GB"), ("traffic", "notify_interval_GB"),
+                 ("tg", "bot_token"), ("tg", "chat_id")]:
         if k not in c.get(s, {}): sys.exit(1)
+
     a = c.setdefault("aliyun", {})
-    a["all_ECS"] = a.get("all_ECS", False)
-    a["all_region_id"] = a.get("all_region_id", False)
-    if not a["all_ECS"]:
-        er, rr = a.get("ECS_instance_id"), a.get("region_id")
-        if er is None: sys.exit(1)
-        el = er if isinstance(er, list) else [er]
-        rl = rr if isinstance(rr, list) else [rr]
-        if len(el) != len(rl):
-            if len(el) == 1: el *= len(rl)
-            elif len(rl) == 1: rl *= len(el)
-            else: sys.exit(1)
-        a["_instances"] = list(zip(el, rl))
-        a["region_id"] = rl[0]
+    keys = a.get("key")
+
+    if keys and isinstance(keys, list):
+        # ── 多账号模式 ──
+        accounts = []
+        for i, k in enumerate(keys):
+            ak = k.get("access_key_id")
+            sk = k.get("access_key_secret")
+            if not ak or not sk:
+                print(f"警告: key[{i}] 缺少 access_key_id/access_key_secret，已跳过")
+                continue
+            acc = _parse_single_account(
+                a, ak, sk,
+                rid_override=k.get("region_id"),
+                er_override=k.get("ECS_instance_id"),
+            )
+            if acc:
+                accounts.append(acc)
+
+        if not accounts:
+            print("错误: 没有有效的账号配置")
+            sys.exit(1)
+
+        a["_accounts"] = accounts
+        # 向后兼容：首账号填充到顶级字段
+        a["access_key_id"] = accounts[0]["access_key_id"]
+        a["access_key_secret"] = accounts[0]["access_key_secret"]
+        a["region_id"] = accounts[0]["region_id"]
+        a["_instances"] = accounts[0]["_instances"]
+        a["all_ECS"] = accounts[0]["all_ECS"]
+        a["all_region_id"] = accounts[0]["all_region_id"]
     else:
-        a["_instances"] = []
+        # ── 单账号兼容模式 ──
+        for s, k in [("aliyun", "access_key_id"), ("aliyun", "access_key_secret"),
+                      ("aliyun", "region_id")]:
+            if k not in c.get(s, {}): sys.exit(1)
+        acc = _parse_single_account(a, a["access_key_id"], a["access_key_secret"])
+        if acc is None:
+            sys.exit(1)
+        a["_accounts"] = [acc]
+        a["all_ECS"] = acc["all_ECS"]
+        a["all_region_id"] = acc["all_region_id"]
+        a["_instances"] = acc["_instances"]
+        a["region_id"] = acc["region_id"]
+
     c.setdefault("traffic", {})["notify_threshold_GB"] = c["traffic"].get("notify_threshold_GB", 0)
     c.setdefault("tg", {})["notify_log"] = c["tg"].get("notify_log", True)
     return c
@@ -121,52 +191,81 @@ def tg_send(token, cid, msg):
     except: pass
 
 
-def main():
-    c = load_config()
-    a, t, g = c["aliyun"], c["traffic"], c["tg"]
-    ak, sk, rid = a["access_key_id"], a["access_key_secret"], a["region_id"]
+def _run_one_account(acc, t, g):
+    """对单个账号执行完整的流量查询 + 启停逻辑，返回 (total_GB, results_or_error_str)。"""
+    ak, sk, rid = acc["access_key_id"], acc["access_key_secret"], acc["region_id"]
 
-    # traffic
     tc = acs(ak, sk, rid)
-    if not tc: sys.exit(1)
+    if not tc:
+        return None, f"账号 {ak[:8]}... 客户端初始化失败"
+
     total = query_traffic(tc)
-    if total is None: sys.exit(1)
+    if total is None:
+        return None, f"账号 {ak[:8]}... 流量查询失败"
 
-    # state & notify
-    state = json.load(open(ST, encoding="utf-8")) if os.path.exists(ST) else {"last_notified_traffic_gb": 0}
-    ni, nt = t["notify_interval_GB"], t.get("notify_threshold_GB", 0)
-    if ni > 0 and total >= nt:
-        last = state.get("last_notified_traffic_gb", 0)
-        if int((total - nt) // ni) > int((max(0, last - nt)) // ni):
-            msg = (f"当前总流量: {total:.2f} GB\n通知门槛: {nt} GB\n"
-                   f"通知间隔: 每 {ni} GB\n时间: {time.strftime('%Y-%m-%d %H:%M:%S')}")
-            tg_send(g["bot_token"], g["chat_id"], msg)
-            state["last_notified_traffic_gb"] = total
-            with open(ST, "w", encoding="utf-8") as f: json.dump(state, f, indent=2)
-
-    # targets
-    targets = get_targets(ak, sk, a["_instances"], rid, a.get("all_region_id", False), a.get("all_ECS", False))
+    targets = get_targets(ak, sk, acc["_instances"], rid,
+                          acc.get("all_region_id", False), acc.get("all_ECS", False))
     if not targets:
-        tg_send(g["bot_token"], g["chat_id"], "未找到任何可操作的 ECS 实例，请检查配置。")
-        sys.exit(1)
+        return total, f"账号 {ak[:8]}... 未找到任何可操作的 ECS 实例"
 
     do_start = total < t["stop_threshold_GB"]
     results = [(iid, rr, ecs_act(ak, sk, iid, rr, do_start)) for iid, rr in targets]
+    return total, results
 
+
+def main():
+    c = load_config()
+    a, t, g = c["aliyun"], c["traffic"], c["tg"]
+    accounts = a.get("_accounts", [])
+
+    # ── 流量通知（用首账号流量，CDT 流量通常按主账号计）──
+    first_acc = accounts[0]
+    tc = acs(first_acc["access_key_id"], first_acc["access_key_secret"], first_acc["region_id"])
+    if tc:
+        total_first = query_traffic(tc)
+        if total_first is not None:
+            state = json.load(open(ST, encoding="utf-8")) if os.path.exists(ST) else {"last_notified_traffic_gb": 0}
+            ni, nt = t["notify_interval_GB"], t.get("notify_threshold_GB", 0)
+            if ni > 0 and total_first >= nt:
+                last = state.get("last_notified_traffic_gb", 0)
+                if int((total_first - nt) // ni) > int((max(0, last - nt)) // ni):
+                    msg = (f"当前总流量: {total_first:.2f} GB\n通知门槛: {nt} GB\n"
+                           f"通知间隔: 每 {ni} GB\n时间: {time.strftime('%Y-%m-%d %H:%M:%S')}")
+                    tg_send(g["bot_token"], g["chat_id"], msg)
+                    state["last_notified_traffic_gb"] = total_first
+                    with open(ST, "w", encoding="utf-8") as f:
+                        json.dump(state, f, indent=2)
+
+    # ── 遍历所有账号 ──
     ts = time.strftime('%Y-%m-%d %H:%M:%S')
-    out = f"当前总流量: {total:.2f} GB\n时间: {ts}"
-    for iid, rr, st in results:
-        out += f"\n区域ID: {rr}\nECS ID: {iid}\n运行情况: {st}"
+    all_errs = []
+    out_parts = [f"🖥️ ECS 保活报告\n时间: {ts}"]
+
+    for idx, acc in enumerate(accounts):
+        total_val, res = _run_one_account(acc, t, g)
+        label = acc["access_key_id"][:8]
+        if isinstance(res, str):
+            # 错误信息
+            out_parts.append(f"\n账号 {idx+1} ({label}...): ❌ {res}")
+            all_errs.append((idx + 1, label, res))
+        else:
+            # 正常结果列表
+            out_parts.append(f"\n账号 {idx+1} ({label}...) | 流量: {total_val:.2f} GB")
+            for iid, rr, st in res:
+                out_parts.append(f"  区域ID: {rr}  ECS ID: {iid}  → {st}")
+                if "失败" in st or "异常" in st:
+                    all_errs.append((idx + 1, label, f"区域ID: {rr}  ECS ID: {iid}  错误: {st}"))
+
+    out = "\n".join(out_parts)
     print(out)
+
     if g.get("notify_log", True):
         tg_send(g["bot_token"], g["chat_id"], out)
     else:
-        # 只在状态异常时通知（失败/错误信息）
-        errs = [(iid, rr, st) for iid, rr, st in results if "失败" in st or "异常" in st]
-        if errs:
+        if all_errs:
             err_msg = f"⚠️ 实例状态异常:\n时间: {ts}"
-            for iid, rr, st in errs:
-                err_msg += f"\n区域ID: {rr}\nECS ID: {iid}\n错误: {st}"
+            for idx, label, detail in all_errs:
+                err_msg += f"\n账号 {idx} ({label}...): {detail}"
             tg_send(g["bot_token"], g["chat_id"], err_msg)
 
 
