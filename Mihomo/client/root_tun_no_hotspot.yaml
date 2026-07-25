@@ -62,8 +62,6 @@ sniffer:
       ports: [443, 8443]
     QUIC:
       ports: [443, 8443]
-  skip-src-address:
-    - 192.168.0.0/12
 
 profile:
   store-selected: true
