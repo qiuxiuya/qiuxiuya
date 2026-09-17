@@ -91,7 +91,7 @@ dns:
   enhanced-mode: fake-ip
   listen: :1053
   fake-ip-range: 198.18.0.0/15
-  fake-ip-range6: fdfe:dcba:9876::1/64
+  fake-ip-range6: 2001:2::/48
   fake-ip-ttl: 1
   fake-ip-filter-mode: rule
   fake-ip-filter:
