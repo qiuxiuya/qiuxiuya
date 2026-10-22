@@ -239,7 +239,7 @@
       {
         "type": "remote",
         "tag": "geosite-cn",
-        "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo/geosite/cn.srs"
+        "url": "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/refs/heads/sing/geo-lite/geosite/cn.srs"
       },
       {
         "type": "remote",

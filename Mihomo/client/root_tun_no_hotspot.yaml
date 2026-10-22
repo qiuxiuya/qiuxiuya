@@ -122,7 +122,7 @@ rule-providers:
   geosite-cn:
     <<: *mrs-domain
     path: ./providers/rules/geosite-cn.mrs
-    url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo/geosite/cn.mrs"
+    url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo-lite/geosite/cn.mrs"
   geosite-connectivity-check:
     <<: *mrs-domain
     path: ./providers/rules/geosite-connectivity-check.mrs
@@ -138,7 +138,7 @@ rule-providers:
   geoip-cn:
     <<: *mrs-ipcidr
     path: ./providers/rules/geoip-cn.mrs
-    url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo/geoip/cn.mrs"
+    url: "https://raw.githubusercontent.com/Mikuu3930/meta-rules-dat/meta/geo-lite/geoip/cn.mrs"
 rules:
   - RULE-SET,AD,REJECT-DROP
   - RULE-SET,geosite-google,Proxy
